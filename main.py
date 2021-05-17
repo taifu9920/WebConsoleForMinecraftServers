@@ -53,7 +53,7 @@ def home():
         elif datas.get("action"):
             if datas["action"] == "start":
                 if len(server) == 0:
-                    server.append(subprocess.Popen("java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar server.jar nogui", stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "server"))
+                    server.append(subprocess.Popen("java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar server.jar nogui", stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server"))
                     read = Thread(target=reader, args=(server[0],))
                     read.setDaemon(True)
                     read.start()
