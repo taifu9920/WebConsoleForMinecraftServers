@@ -1,0 +1,4 @@
+Flask
+tinydb
+Flask-WTF
+waitress
