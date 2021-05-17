@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template, url_for, session, redirect
 from flask_wtf.csrf import CSRFProtect
 from datetime import datetime
 from tinydb import TinyDB, Query
@@ -8,6 +8,7 @@ import os, subprocess, waitress
 Hosts = 0
 IPs = ["0.0.0.0", "127.0.0.1"]
 port = 7878
+password = "rmh"
 
 types = ["Info", "Warning", "Critical", "Success", "Failed"]
 LoggerPath = "Logs/"
@@ -40,27 +41,44 @@ def reader(server):
         else:
             break
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/", methods=['GET'])
 def home():
     incoming(request)
-    if request.method == "POST":
-        datas = request.form
-        if datas.get("cmd"):
-            if len(server) > 0:
-                server[0].stdin.write((datas["cmd"] + "\n").encode("utf-8"))
-                server[0].stdin.flush()
-                return "OK"
-        elif datas.get("action"):
-            if datas["action"] == "start":
-                if len(server) == 0:
-                    server.append(subprocess.Popen("java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar server.jar nogui", stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server"))
-                    read = Thread(target=reader, args=(server[0],))
-                    read.setDaemon(True)
-                    read.start()
-                    return "Server Started"
-        return "Failed"
-    else:
-        return render_template("index.html")
+    if session.get("secret") == password:
+        return redirect(url_for("admin"))
+    return render_template("index.html")
+    
+@app.route("/logout", methods=['GET'])
+def logout():
+    incoming(request)
+    del session["secret"]
+    return redirect(url_for("home"))
+    
+@app.route("/admin", methods=['GET', 'POST'])
+def admin():
+    incoming(request)
+    datas = request.form
+    if session.get("secret") == password:
+        if request.method == "POST":
+            if datas.get("cmd"):
+                if len(server) > 0:
+                    server[0].stdin.write((datas["cmd"] + "\n").encode("utf-8"))
+                    server[0].stdin.flush()
+                    return "OK"
+            elif datas.get("action"):
+                if datas["action"] == "start":
+                    if len(server) == 0:
+                        server.append(subprocess.Popen("java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar server.jar nogui", stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server"))
+                        read = Thread(target=reader, args=(server[0],))
+                        read.setDaemon(True)
+                        read.start()
+                        return "Server Started"
+        return render_template("admin.html")
+    elif datas.get("Admin"):
+        if datas["Admin"] == password:
+            session["secret"] = datas["Admin"]
+            return render_template("admin.html")
+    return redirect(url_for("home"))
     
     
 db = TinyDB("db.tinydb")

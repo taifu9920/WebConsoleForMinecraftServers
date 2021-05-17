@@ -241,12 +241,23 @@ th, td {
 .dark th, td{
 	border-bottom: 2px solid gray;
 }
+
+#log li {
+	color: #000000;
+	
+}
+
+.dark #log li {
+	color: #FFFFFF;
+	
+}
+
 tr:hover {background-color:blanchedalmond;}
 .dark tr:hover {background-color:gray;}
 #YTURL textarea::placeholder {
 	color: #F44336;
 }
-#Admin input::placeholder {
+#secret input::placeholder {
 	color: #2196F3;
 }
 #Volume input::placeholder {
