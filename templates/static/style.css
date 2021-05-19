@@ -207,27 +207,24 @@ button {
 	margin-top: 5px;
 	margin-bottom: 10px;
 }
-#UsrControl, #AdmControl {
+#Control .disable{
+	width: 0px;
+	
+}
+#Control {
+	max-width: unset;
 	clear: unset;
 	display: table;
 	width: 100%;
 	margin: 0px;
 	font-weight: bold;
 }
-#UsrControl input, #AdmControl button {
+#Control input {
 	height: 100%;
+	width: 33.33333%;
 	padding: 1% 2% 1% 2%;
 	color: #4CAF50;
 	margin: 0;
-}
-#AdmControl {
-	max-width: unset;
-}
-#UsrControl input {
-	width: 14.28571428571%;
-}
-#AdmControl button {
-	width: 20%;
 }
 table {
   border-collapse: collapse;
@@ -250,6 +247,9 @@ th, td {
 .dark #log li {
 	color: #FFFFFF;
 	
+}
+.dark h4 {
+	color: #000000;
 }
 
 tr:hover {background-color:blanchedalmond;}
