@@ -1,0 +1,13 @@
+{% extends 'Base.html' %}
+
+{% block Contents %}
+<p></p>
+<div class="w3-card-4 w3-center">
+	<div class="w3-container w3-green"><h2>ServerLists</h2></div>
+	<form action="/admin" id="ServerList" class="w3-bar" style="width:100%; max-width:900px;" method="post">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		{{ folders | safe }}
+	</form>
+</div>
+<input class="w3-btn w3-blue" type="button" value="Logout" onclick="location.href='/logout'">
+{% endblock %}

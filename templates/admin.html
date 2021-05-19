@@ -1,0 +1,37 @@
+{% extends 'Base.html' %}
+
+{% block Contents %}
+<p></p>
+<div class="w3-card-4 w3-center">
+	<div class="w3-container w3-green"><h2>{{ folder }}</h2></div>
+	<form method="post" action="/admin" id="Control" class="w3-bar">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		<input type="hidden" class="disable" name="folder" value="{{ folder }}"/>
+		<input class="w3-bar-item w3-button" type="submit" name="action" value="Turn {{ status }}">
+		<input class="w3-bar-item w3-button" type="button" value="Server List" onclick="location.href='/servers'">
+		<input class="w3-bar-item w3-button" type="button" value="Logout" onclick="location.href='/logout'">
+	</form>
+</div>
+
+<div class="space"></div>
+
+<div class="w3-card-4 w3-center">
+	<div class="w3-container w3-blue"><h2>Send Commands</h2></div>
+	<p></p>
+	<div id="log" style="overflow:scroll; max-height:400px">
+		<li class="w3-bar">
+		  <div class="w3-bar-item">
+			<pre style="text-align: left;">{{ log }}</pre>
+		  </div>
+		</li>
+	</div>
+	<form action="/admin" class="w3-container" method="post">
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+		<input type="hidden" name="folder" value="{{ folder }}"/>
+		<p>
+			<div id="secret" class="code"><input class="w3-input w3-animate-input w3-center" placeholder="Commandline" name="Admin" type="password"></div>
+		</p>
+		<button type="submit" class="w3-btn w3-blue">Send</button>
+	</form>
+</div>
+{% endblock %}
