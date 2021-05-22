@@ -36,35 +36,6 @@ var docCookies = {
   }
 };
 
-function setupTimer(s,e) {
-	current = document.getElementById('CurrentTime');
-	var ends = document.getElementById('DurationTime');
-	current.innerHTML = Sec2Time(s);
-	ends.innerHTML = Sec2Time(e);
-	t_s = s;
-	t_e = e;
-	setInterval("ClockTick();",1000);
-}
-
-function ClockTick() {
-	if (t_s < t_e) {
-		t_s += 1;
-		current.innerHTML = Sec2Time(t_s);
-	}else{
-		clearInterval();
-		location.reload();
-	}
-}
-
-function Sec2Time(secs){
-	var pad = function(num, size) { return ('000' + num).slice(size * -1); },
-	hours = Math.floor(secs / 60 / 60),
-	minutes = Math.floor(secs / 60) % 60,
-	seconds = Math.floor(secs - minutes * 60);
-
-	return pad(hours, 2) + ':' + pad(minutes, 2) + ':' + pad(seconds, 2);
-}
-
 function setThemeFromCookie() {
 	var body = document.getElementsByTagName('body')[0];
 	body.className = docCookies.getItem("theme") == "true" ? 'dark' : '';
@@ -77,31 +48,9 @@ function toggleTheme() {
 	setThemeFromCookie();
 }
 
-function CopyArea() {
-	var Area = document.getElementById("CopyHere");
-	window.getSelection().selectAllChildren(Area);
-	document.execCommand("Copy")
-	document.getElementsByClassName("Popup")[0].classList.toggle("show");
-}
-
 function Load() {
 	setThemeFromCookie()
 	document.getElementById("slider").addEventListener("change", toggleTheme);
-	
-	var Home = document.getElementById("Home");
-	var Return = document.getElementById("Return");
-	var VolSwitch = document.getElementById("volume");
-	var CopyButton = document.getElementById("CopyButton")
-	
-	if (Home != null) Home.addEventListener("click", function(){window.location.href = "/";});
-	if (Return != null) Return.addEventListener("click", function(){window.location.replace(document.referrer)});
-	if (CopyButton != null) CopyButton.addEventListener("click", CopyArea);
-	if (VolSwitch != null) {
-		var viewval = document.getElementById("VolNow");
-		VolSwitch.value = viewval.innerHTML;
-		VolSwitch.oninput = function(){viewval.innerHTML = this.value;};
-	}
-	
 	document.getElementById("mask").remove();
 }
 
