@@ -2,3 +2,4 @@ Flask
 tinydb
 Flask-WTF
 waitress
+Flask-SocketIO
