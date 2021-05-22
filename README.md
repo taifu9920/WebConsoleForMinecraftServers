@@ -13,6 +13,14 @@ Whatever on PC or Mobile.
 #### 4. You can now open `main.py` to run this program
 #### 5. When running, You can go to the control panel `http://localhost:7878` (port 7878 by default, you can change it in the `main.py` file)
 
+## How To Use:
+#### * Create a folder inside `Server`
+#### * Put your Minecraft Server Core `xxx.jar` inside, name doesn't matter.
+#### * If you had, put your `xxx.bat` inside as well, name doesn't matter. (P.S if you had any PAUSE command inside this file, I recommand delete them, else this console might not be compatible)
+#### * Now, run and login to this program console, you'll see the folder name.
+#### * Start the server on the console allows you control on the browser.
+
+
 After Your first run, Few files and folders will be generates.
 ## Original Files:
 | Name | Type | Detail |
