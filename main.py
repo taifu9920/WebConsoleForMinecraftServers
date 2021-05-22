@@ -109,7 +109,7 @@ def getfiles(folder, ext, selected = None):
             if selected == None:
                 db.update({pos:files[0]}, query.folder==folder)
             return "".join([(("<option value='{0}'" + (" selected" if selected == f else "") + ">{0}</option>")).format(f) for f in os.listdir("Server/" + folder) if f.endswith(ext)])
-    return "".join(["<option value='empty'>No files.</option>"])
+    return "".join(["<option value='empty' disabled>No files.</option>"])
     
 @app.route("/admin", methods=['GET', 'POST'])
 def admin():
@@ -142,7 +142,6 @@ def admin():
                         return render_template("admin.html", folder = folder, status = "on", log = "Server not online yet", jarlist= jarlist, batlist= batlist)
                     else:
                         if setupfile:
-                            print(setupfile, folder)
                             Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
                         elif jarFile:
                             Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, ""]

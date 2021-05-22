@@ -1,1 +1,1 @@
-{"_default": {"1": {"secret": "b'\\xadi\\xf7_\\x04\\x87U`\\xb4\\x04K\\xc0\\xe2\\x04\\x04\\x8d\\x8d`ha\\xe8~\\x81v'"}, "2": {"folder": "Test", "setup": "Start.bat", "jarFile": "server.jar"}}}
+{"_default": {"1": {"secret": "b'\\x1a\\xe8r\\r\\xb4H\\xca;\\xe7\\xbb\\xc6mM%\\x87\\x0e\\xc4\\xa2\\xa4\\x01\\x1f\\xe36\\xbf'"}, "2": {"folder": "Server 2", "setup": null, "jarFile": "server.jar"}, "3": {"folder": "Server 1", "setup": "Start.bat", "jarFile": "server.jar"}}}
