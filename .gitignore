@@ -1,3 +1,4 @@
 Logs/*
 Server/*
 db.tinydb
+__pycache__/*
