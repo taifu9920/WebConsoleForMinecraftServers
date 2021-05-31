@@ -1,6 +1,6 @@
 # Web-based-Minecraft-server-control
 ### An web application made with Python, for peoples who wanted to control multiple Minecraft servers with just an URL.
-##P.S Only Windows 10 is tested.
+## P.S Only Windows 10 is tested.
 I don't see much peoples doing this via Python, less for Windows,
 So here's the project which allows you to control your Minecraft Server online,
 You can now easily control Minecraft Server using just a URL to login, send commands, view players or the terminal,
