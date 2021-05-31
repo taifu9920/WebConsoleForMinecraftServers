@@ -4,7 +4,7 @@ port = 7878 # Change this to change the connect port
 password = "admin" # VERY RECOMMAND CHANGE THIS DEFAULT PASSWORD TO ANYTHING ELSE
 #----------------------------
 #-----Other Setting-----
-LogOnConsole = True # Change this to decide showing all server logs on program console or not
+LogOnConsole = False # Change this to decide showing all server logs on program console or not
 #----------------------------
 
 
