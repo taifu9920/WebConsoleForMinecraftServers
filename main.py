@@ -4,28 +4,21 @@ from flask_socketio import SocketIO, emit
 from datetime import datetime
 from tinydb import TinyDB, Query
 from threading import Thread
+from config import *
 import os, subprocess, waitress, time
 
-Hosts = 1
-IPs = ["0.0.0.0", "127.0.0.1"]
-port = 7878
-password = "rmh"
-default_setup = "java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar {0} nogui"
-default_jarFile = "server.jar"
-
-incoming = lambda req: logger("Incoming connection from {0}, target page {1}".format(req.remote_addr, req.path), 1)
+incoming = lambda req: logger(Log_Incoming.format(req.remote_addr, req.path), 1)
 PathExist = lambda path: os.path.exists(path)
 genLog = lambda: str(datetime.now())[:-7].replace(" ", "_").replace(":","_") + ".log"
 
-types = ["Info", "Warning", "Critical", "Success", "Failed"]
-LoggerPath = "Logs/"
-LogFile = genLog()
+types = [Log_info, Log_warning, Log_critical, Log_success, Log_failed]
 
 app = Flask(__name__, static_folder='templates/static', template_folder='templates')
 CSRFProtect(app)
 socketio = SocketIO(app)
 
 Servers = {}
+LogFile = genLog()
 
 def FolderInit(path):
     if not PathExist(path):
@@ -35,17 +28,16 @@ def logger(msg, code = 0):
     #0 to 4 are available
     FolderInit(LoggerPath)
     with open(LoggerPath + LogFile, "a+", encoding='UTF-8') as file:
-        buffer = "{0} | {1} : {2}".format(types[code], datetime.now(), msg)
+        buffer = Log_format.format(types[code], datetime.now(), msg)
         print(buffer)
         file.write(buffer + "\n")
 
 def reader(serverData):
     server = serverData[0]
     for i in iter(server.stdout.readline, ""):
-        print(i)
         if i:
             buffer = i.decode("big5").strip()
-            logger(buffer)
+            if (LogOnConsole): logger(buffer)
             socketio.emit("logs", {"log":buffer + "\n", "folder":serverData[1]})
         else:
             break
@@ -89,6 +81,19 @@ def command(data):
         if server:
             server[0].stdin.write((cmd + "\n").encode("utf-8"))
             server[0].stdin.flush()
+        elif cmd == "stop":
+            setupfile = db.get(query.folder == folder).get("setup")
+            jarFile = db.get(query.folder == folder).get("jarFile")
+            if setupfile:
+                Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
+            elif jarFile:
+                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, ""]
+            else:
+                return "ERROR"
+            emit("online", {"folder": folder})
+            read = Thread(target=reader, args=(Servers[folder], ))
+            read.setDaemon(True)
+            read.start()
 
 def readLog(loc):
     if os.path.exists(loc):
@@ -135,22 +140,6 @@ def admin():
                 jarlist= getfiles(folder, ".jar", jarFile)
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
-                if action and action.startswith("Turn "):
-                    if server:
-                        server[0].stdin.write(("stop\n").encode("utf-8"))
-                        server[0].stdin.flush()
-                        return render_template("admin.html", folder = folder, status = "on", log = "Server not online yet", jarlist= jarlist, batlist= batlist)
-                    else:
-                        if setupfile:
-                            Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
-                        elif jarFile:
-                            Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, ""]
-                        else:
-                            return render_template("admin.html", folder = folder, status = "off", log = "", jarlist= jarlist, batlist= batlist)
-                        read = Thread(target=reader, args=(Servers[folder], ))
-                        read.setDaemon(True)
-                        read.start()
-                        return render_template("admin.html", folder = folder, status = "off", log = "", jarlist= jarlist, batlist= batlist)
                 return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, batlist= batlist)
         return redirect(url_for("servers"))
     return redirect(url_for("home"))
@@ -158,7 +147,6 @@ def admin():
     
 db = TinyDB("db.tinydb")
 query = Query()
-print(db.all())
 
 tmp = db.get(query.secret.exists())
 if tmp: secret = tmp["secret"]
@@ -171,7 +159,7 @@ webpanel = Thread(target=waitress.serve, args=(app, ), kwargs={"host":IPs[Hosts]
 webpanel.setDaemon(True)
 webpanel.start()
 
-logger("Server is running now!\nUse Ctrl + 'c' to stop.")
+logger(Log_start)
 serverStatus = True
 while serverStatus:
     try:
@@ -181,7 +169,7 @@ while serverStatus:
     except (KeyboardInterrupt, EOFError):
         serverStatus = False
     
-logger("Shutdowning...")
+logger(Log_stop)
 for i in Servers.values():
     i[0].stdin.write(("stop\n").encode("utf-8"))
     i[0].stdin.flush()

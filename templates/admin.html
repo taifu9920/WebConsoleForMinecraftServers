@@ -7,7 +7,7 @@
 	<form method="post" action="/admin" id="Control" class="w3-bar">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<input type="hidden" class="disable" name="folder" value="{{ folder }}"/>
-		<input class="w3-bar-item w3-button" type="submit" name="action" value="Turn {{ status }}">
+		<input class="w3-bar-item w3-button" type="submit" id="turn" name="action" value="Turn {{ status }}">
 		<input class="w3-bar-item w3-button" type="button" value="Server List" onclick="location.href='/servers'">
 		<input class="w3-bar-item w3-button" type="button" value="Logout" onclick="location.href='/logout'">
 	</form>
@@ -29,7 +29,7 @@
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<input type="hidden" name="folder" value="{{ folder }}"/>
 		<p> </p>
-		<div id="secret" class="code"><input class="w3-input w3-animate-input w3-center" placeholder="CommandLine" name="Admin" type="password"></div>
+		<div class="code"><input class="w3-input w3-animate-input w3-center" placeholder="CommandLine" autocomplete="off" name="Admin" type="text"></div>
 		<button id="cmdSend" type="submit" class="w3-btn w3-blue">Send</button>
 	</form>
 </div>
@@ -51,7 +51,7 @@
 			{{ jarlist | safe }}
 		</select>
 		<p></p>
-		<button id="cmdSend" type="submit" class="w3-btn w3-blue">Send</button>
+		<button id="configSend" type="submit" class="w3-btn w3-blue">Send</button>
 	</form>
 </div>
 {% endblock %}
@@ -59,18 +59,40 @@
 {% block JS %}
 $(document).ready(function(){
     var socket = io();
+	var locked = true;
     socket.on('logs', function(data) {
-        if($("#folder").text() == data.folder){$('#logs').append(data.log);}
+        if($("#folder").text() == data.folder){
+			$('#logs').append(data.log);
+			if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
+		}
     });
 	socket.on('offline', function(data) {
         if($("#folder").text() == data.folder){
-			$("#logs")[0].innerHTML = "Server went off."
-			$("form input")[2].value = "Turn on";
+			$("#logs")[0].innerHTML += "Server went off.";
+			$("#turn")[0].value = "Turn on";
+		}
+    });
+	socket.on('online', function(data) {
+        if($("#folder").text() == data.folder){
+			$("#logs")[0].innerHTML = "";
+			$("#turn")[0].value = "Turn off";
 		}
     });
 	$('#cmdform').submit(function(event) {
-        socket.emit('cmd', {cmd: $('#secret input').val(), folder: $("#folder").text()});
+        socket.emit('cmd', {cmd: $('.code input').val(), folder: $("#folder").text()});
+		$(".code input")[0].value = "";
         return false;
     });
+	$('#Control').submit(function(event) {
+        socket.emit('cmd', {cmd: "stop", folder: $("#folder").text()});
+		if($("#turn")[0].value == "Turn on"){$("#turn")[0].value = "Turn off";}
+		else{$("#turn")[0].value = "Turn on";}
+        return false;
+    });
+	$("#log").on("scroll", function(event){
+		pos = $(event.currentTarget);
+		if(pos[0].scrollHeight - pos.scrollTop() <= pos.outerHeight() - 10){locked = true;}
+		else{locked = false;}
+	});
 });
 {% endblock %}

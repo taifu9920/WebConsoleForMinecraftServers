@@ -263,7 +263,7 @@ th, td {
 tr:hover {background-color:blanchedalmond;}
 .dark tr:hover {background-color:gray;}
 
-#secret input::placeholder {
+.code input::placeholder {
 	color: #2196F3;
 }
 #configure input::placeholder {
