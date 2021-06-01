@@ -5,7 +5,7 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 from threading import Thread
 from config import *
-import os, subprocess, waitress, time
+import os, subprocess, waitress, time, signal
 
 incoming = lambda req: logger(Log_Incoming.format(req.remote_addr, req.path), 1)
 PathExist = lambda path: os.path.exists(path)
@@ -18,6 +18,7 @@ CSRFProtect(app)
 socketio = SocketIO(app)
 
 Servers = {}
+rebootlist = []
 LogFile = genLog()
 
 def FolderInit(path):
@@ -33,16 +34,42 @@ def logger(msg, code = 0):
         file.write(buffer + "\n")
 
 def reader(serverData):
-    server = serverData[0]
-    for i in iter(server.stdout.readline, ""):
-        if i:
-            buffer = i.decode("big5").strip()
-            if (LogOnConsole): logger(buffer)
-            socketio.emit("logs", {"log":buffer + "\n", "folder":serverData[1]})
+    while True:
+        server = serverData[0]
+        folder = serverData[1]
+        for i in iter(server.stdout.readline, ""):
+            if i:
+                buffer = i.decode("big5").strip()
+                if (LogOnConsole): logger(buffer)
+                socketio.emit("logs", {"log":buffer + "\n", "folder":folder})
+            else:
+                break
+        del Servers[folder]
+        socketio.emit("offline", {"folder": folder})
+        if db.get(query.folder == folder).get("autoreboot") == "enable" or folder in rebootlist:
+            if folder in rebootlist: rebootlist.remove(folder)
+            setupfile = db.get(query.folder == folder).get("setup")
+            jarFile = db.get(query.folder == folder).get("jarFile")
+            if setupfile:
+                serverData = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
+            elif jarFile:
+                serverData = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, ""]
+            else:
+                return
+            Servers[folder] = serverData
+            socketio.emit("online", {"folder": folder})
         else:
-            break
-    del Servers[serverData[1]]
-    socketio.emit("offline", {"folder": serverData[1]})
+            return
+
+@socketio.on("reboot")
+def reboot(data):
+    folder = data.get("folder")
+    if folder:
+        if Servers.get(folder):
+            if not folder in rebootlist:
+                rebootlist.append(folder)
+            Servers[folder][0].stdin.write(("stop\n").encode("utf-8"))
+            Servers[folder][0].stdin.flush()
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
@@ -61,7 +88,7 @@ def servers():
     if session.get("secret") == password:
         folders = ""
         for f in [f for f in os.listdir("Server") if os.path.isdir(os.path.join("Server", f))]:
-            folders += '<input type="submit" class="w3-button w3-block w3-red" style="width:100%; margin:0;" value="'+f+'" name="folder">'
+            folders += '<input type="submit" class="w3-button w3-block ' + ("w3-green" if Servers.get(f) else "w3-red") + '" style="width:100%; margin:0;" value="'+f+'" name="folder">'
         return render_template("servers.html", folders=("<div class='w3-red'><h4 style='margin:0'>No Server yet</h4></div>" if folders == "" else folders))
     return redirect(url_for("home"))
     
@@ -71,6 +98,15 @@ def logout():
     del session["secret"]
     return redirect(url_for("home"))
     
+@socketio.on("forcestop")
+def force(data):
+    folder = data.get("folder")
+    if folder:
+        if Servers.get(folder):
+            os.kill(Servers[folder][0].pid, signal.CTRL_C_EVENT)
+            Servers[folder][0].stdin.write(("y\n").encode("utf-8"))
+            Servers[folder][0].stdin.flush()
+
 @socketio.on("cmd")
 def command(data):
     folder = data.get("folder")
@@ -85,12 +121,12 @@ def command(data):
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
             if setupfile:
-                Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
+                Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
             elif jarFile:
-                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder), folder, ""]
+                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, ""]
             else:
                 return "ERROR"
-            emit("online", {"folder": folder})
+            socketio.emit("online", {"folder": folder})
             read = Thread(target=reader, args=(Servers[folder], ))
             read.setDaemon(True)
             read.start()
@@ -129,18 +165,21 @@ def admin():
                 log = readLog("Server/" + server[1] + "/logs/latest.log") if server else "Server not online yet"
                 action = datas.get("action")
                 if not db.get(query.folder == folder):
-                    db.insert({"folder":folder, "setup":None, "jarFile":None})
+                    db.insert({"folder":folder, "setup":None, "jarFile":None, "autoreboot":"disable"})
                 if datas.get("setup"):
                     db.update({"setup": datas.get("setup")}, query.folder==folder)
                 if datas.get("jarfile"):
                     db.update({"jarFile": datas.get("jarfile")}, query.folder==folder)
+                if datas.get("autoreboot"):
+                    db.update({"autoreboot": datas.get("autoreboot")}, query.folder==folder)
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
+                autoreboot = db.get(query.folder == folder).get("autoreboot")
                 batlist = getfiles(folder, ".bat", setupfile)
                 jarlist= getfiles(folder, ".jar", jarFile)
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
-                return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, batlist= batlist)
+                return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, batlist= batlist, titleColor = "w3-green" if server else "w3-red", statustag = "online" if server else "offline", ar_e = "selected" if autoreboot == "enable" else "", ar_d = "selected" if autoreboot == "disable" else "")
         return redirect(url_for("servers"))
     return redirect(url_for("home"))
     

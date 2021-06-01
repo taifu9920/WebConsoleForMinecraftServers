@@ -83,6 +83,17 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+.dark label, .dark input{
+	color: white;
+}
+
+.w3-container, .w3-panel {
+    padding: 0;
+}
+
+pre {
+	display: table;
+}
 #CopyButton {
   position: relative;
   display: inline-block;
@@ -128,37 +139,6 @@ input:checked + .slider:before {
 h2{
 	color: white;
 }
-
-.dark {
-	background: #595959;
-}
-
-.dark h2 {
-	color: black;
-}
-
-.dark footer p{
-	color: black;
-}
-
-.dark input, .dark textarea {
-	background-color: #707070;
-	border-bottom-color: black;
-}
-
-.dark input:focus, .dark textarea:focus{
-	outline: none;
-}
-
-.dark .w3-bar-item {
-	background-color: unset;
-}
-
-.dark hr {
-	background: #808080;
-	border-top-color: #808080;
-}
-
 /* Header */
 header {
 	text-align: center;
@@ -213,7 +193,6 @@ button {
 }
 #Control .disable{
 	width: 0px;
-	
 }
 #Control {
 	max-width: unset;
@@ -225,10 +204,15 @@ button {
 }
 #Control input {
 	height: 100%;
-	width: 33.33333%;
+	width: 20%;
 	padding: 1% 2% 1% 2%;
-	color: #4CAF50;
 	margin: 0;
+}
+.offline input {
+	color: #F44336;
+}
+.online input {
+	color: #4CAF50;
 }
 table {
   border-collapse: collapse;
@@ -247,6 +231,13 @@ th, td {
 	color: #000000;
 	
 }
+#log li div {
+	padding: 0;
+}
+#logs {
+	margin: 0;
+	
+}
 
 .dark #log li {
 	color: #FFFFFF;
@@ -256,8 +247,36 @@ th, td {
 	color: #000000;
 }
 
-.dark label, .dark input{
-	color: white;
+
+
+.dark {
+	background: #595959;
+}
+
+.dark h2 {
+	color: black;
+}
+
+.dark footer p{
+	color: black;
+}
+
+.dark input, .dark textarea {
+	background-color: #707070;
+	border-bottom-color: black;
+}
+
+.dark input:focus, .dark textarea:focus{
+	outline: none;
+}
+
+.dark .w3-bar-item {
+	background-color: unset;
+}
+
+.dark hr {
+	background: #808080;
+	border-top-color: #808080;
 }
 
 tr:hover {background-color:blanchedalmond;}

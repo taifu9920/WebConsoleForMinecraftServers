@@ -3,28 +3,28 @@
 {% block Contents %}
 <p></p>
 <div class="w3-card-4 w3-center">
-	<div class="w3-container w3-green"><h2 id="folder">{{ folder }}</h2></div>
-	<form method="post" action="/admin" id="Control" class="w3-bar">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-		<input type="hidden" class="disable" name="folder" value="{{ folder }}"/>
-		<input class="w3-bar-item w3-button" type="submit" id="turn" name="action" value="Turn {{ status }}">
+	<div id="cp" class="w3-container {{ titleColor }}"><h2 id="folder">{{ folder }}</h2></div>
+	<div id="Control" class="w3-bar {{ statustag }}">
+		<input class="w3-bar-item w3-button" type="button" id="reboot" name="action" value="Reboot">
+		<input class="w3-bar-item w3-button" type="button" id="turn" name="action" value="Turn {{ status }}">
+		<input class="w3-bar-item w3-button" type="button" id="force" name="action" value="Force Shutdown">
 		<input class="w3-bar-item w3-button" type="button" value="Server List" onclick="location.href='/servers'">
 		<input class="w3-bar-item w3-button" type="button" value="Logout" onclick="location.href='/logout'">
-	</form>
+	</div>
 </div>
 
 <div class="space"></div>
 
 <div class="w3-card-4 w3-center">
 	<div class="w3-container w3-blue"><h2>Send Commands</h2></div>
-	<p></p>
-	<div id="log" style="overflow:scroll; max-height:400px">
+	<div id="log" style="overflow:auto; max-height:400px">
 		<li class="w3-bar">
 		  <div class="w3-bar-item">
 			<pre id="logs" style="text-align: left;">{{ log }}</pre>
 		  </div>
 		</li>
 	</div>
+	<div class="w3-container w3-blue"><input type="button" value="word wrap" id="wwb" class="w3-btn w3-left w3-green"></div>
 	<form id="cmdform" action="/admin" class="w3-container" method="post">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<input type="hidden" name="folder" value="{{ folder }}"/>
@@ -50,6 +50,11 @@
 		<select class="w3-select" name="jarfile">
 			{{ jarlist | safe }}
 		</select>
+		<label>Auto Reboot</label>
+		<select class="w3-select" name="autoreboot">
+			<option value="enable" {{ ar_e }}>Enable</option>
+			<option value="disable" {{ ar_d }}>Disable</option>
+		</select>
 		<p></p>
 		<button id="configSend" type="submit" class="w3-btn w3-blue">Send</button>
 	</form>
@@ -70,12 +75,17 @@ $(document).ready(function(){
         if($("#folder").text() == data.folder){
 			$("#logs")[0].innerHTML += "Server went off.";
 			$("#turn")[0].value = "Turn on";
+			$("#cp")[0].className = "w3-container w3-red"
+			$("#Control")[0].className  = "w3-bar offline"
 		}
     });
 	socket.on('online', function(data) {
         if($("#folder").text() == data.folder){
 			$("#logs")[0].innerHTML = "";
 			$("#turn")[0].value = "Turn off";
+			$("#cp")[0].className = "w3-container w3-green"
+			$("#Control")[0].className  = "w3-bar online"
+			
 		}
     });
 	$('#cmdform').submit(function(event) {
@@ -83,7 +93,7 @@ $(document).ready(function(){
 		$(".code input")[0].value = "";
         return false;
     });
-	$('#Control').submit(function(event) {
+	$('#turn').click(function(event) {
         socket.emit('cmd', {cmd: "stop", folder: $("#folder").text()});
 		if($("#turn")[0].value == "Turn on"){$("#turn")[0].value = "Turn off";}
 		else{$("#turn")[0].value = "Turn on";}
@@ -91,8 +101,30 @@ $(document).ready(function(){
     });
 	$("#log").on("scroll", function(event){
 		pos = $(event.currentTarget);
-		if(pos[0].scrollHeight - pos.scrollTop() <= pos.outerHeight() - 10){locked = true;}
+		if(pos[0].scrollHeight - pos.scrollTop() <= pos.outerHeight() + 25){locked = true;}
 		else{locked = false;}
 	});
+	var setwwb = function(){
+		if(docCookies.getItem("wordwrap") == "true"){
+			$("#logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap;");
+			$("#wwb")[0].className = "w3-btn w3-left w3-green"
+		}
+		else{
+			$("#logs")[0].setAttribute("style", "text-align: left;");
+			$("#wwb")[0].className = "w3-btn w3-left w3-red"
+		}
+	};
+	$("#wwb").click(function(){
+		docCookies.setItem("wordwrap", !(docCookies.getItem("wordwrap") == "true"), Infinity);
+		setwwb();
+	});
+	setwwb();
+	$("#force").click(function(){
+		socket.emit('forcestop', {folder: $("#folder").text()});
+	});
+	$("#reboot").click(function(){
+		socket.emit('reboot', {folder: $("#folder").text()});
+	});
+	$("#log").scrollTop($("#log")[0].scrollHeight);
 });
 {% endblock %}

@@ -40,7 +40,6 @@ function setThemeFromCookie() {
 	var body = document.getElementsByTagName('body')[0];
 	body.className = docCookies.getItem("theme") == "true" ? 'dark' : '';
 	document.getElementById("slider").checked = docCookies.getItem("theme") == "true";
-	
 }
 
 function toggleTheme() {

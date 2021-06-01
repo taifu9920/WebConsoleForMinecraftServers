@@ -11,3 +11,15 @@
 </div>
 <input class="w3-btn w3-blue" type="button" value="Logout" onclick="location.href='/logout'">
 {% endblock %}
+
+{% block JS %}
+$(document).ready(function(){
+    var socket = io();
+	socket.on('online', function(data) {
+        $("input[value='" + data.folder + "']")[0].className = "w3-button w3-block w3-green";
+    });
+	socket.on('offline', function(data) {
+        $("input[value='" + data.folder + "']")[0].className = "w3-button w3-block w3-red";
+    });
+});
+{% endblock %}
