@@ -27,7 +27,6 @@ After Your first run, Few files and folders will be generates.
 | Name | Type | Detail |
 | --------------- | --------------- | --------------- |
 | Setup | Folder | Contains all setup files for Installing necessary packages. |
-| Src | Folder | Contains other required functions for `main.py` to be working. |
 | templates | Folder | Contains all HTML files for HTTP access. |
 | main.py | Python Executable | The entry point of this program. |
 | config.py | Python Executable | The config of program |
