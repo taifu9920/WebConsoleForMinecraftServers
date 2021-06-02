@@ -106,7 +106,7 @@ $(document).ready(function(){
 	});
 	var setwwb = function(){
 		if(docCookies.getItem("wordwrap") == "true"){
-			$("#logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap;");
+			$("#logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;");
 			$("#wwb")[0].className = "w3-btn w3-left w3-green"
 		}
 		else{
