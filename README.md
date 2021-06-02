@@ -19,7 +19,7 @@ Whatever on PC or Mobile.
 #### * If you had, put your `xxx.bat` inside as well, name doesn't matter. (P.S I recommand not having any PAUSE command inside your bat file, else the logger might acting strange.)
 #### * Now, run and login to this program console(Default secret code is `admin`, HIGHLY RECOMMAND CHANGE IT IN THE `config.py` FIRST), you'll see the folder name.
 #### * Start the server on the console allows you control on the browser.
-#### * Enter commandline `stop` or use Ctrl+C to stop the program and close all remaining server at once.
+#### * Enter commandline `stop` to stop the program and close all remaining server at once.
 
 
 After Your first run, Few files and folders will be generates.
