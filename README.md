@@ -42,10 +42,10 @@ All the remaining setting and configure information is inside the `config.py`,
 You can change your port, binding IP from Internet or Localhost, secret code for login, or logs detail inside.
 
 # Incomplete:
-# * 200ms buffer load for logs.
-# * A better HTML interface with designs
-# * Page for changing config file
-# * Page for viewing past logs
-# * View all plugins
-# * Plugin Installion on HTML interface
-# * More information like RAM, server runtime, etc.
+### * 200ms buffer load for logs.
+### * A better HTML interface with designs
+### * Page for changing config file
+### * Page for viewing past logs
+### * View all plugins
+### * Plugin Installion on HTML interface
+### * More information like RAM, server runtime, etc.
