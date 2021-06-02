@@ -1,11 +1,12 @@
 from flask import Flask, request, render_template, url_for, session, redirect
 from flask_wtf.csrf import CSRFProtect
 from flask_socketio import SocketIO, emit
+from socketio import Client
 from datetime import datetime
 from tinydb import TinyDB, Query
 from threading import Thread
 from config import *
-import os, subprocess, waitress, time, signal
+import os, subprocess, time, psutil
 
 incoming = lambda req: logger(Log_Incoming.format(req.remote_addr, req.path), 1)
 PathExist = lambda path: os.path.exists(path)
@@ -16,7 +17,6 @@ types = [Log_info, Log_warning, Log_critical, Log_success, Log_failed]
 app = Flask(__name__, static_folder='templates/static', template_folder='templates')
 CSRFProtect(app)
 socketio = SocketIO(app)
-
 Servers = {}
 rebootlist = []
 LogFile = genLog()
@@ -34,6 +34,8 @@ def logger(msg, code = 0):
         file.write(buffer + "\n")
 
 def reader(serverData):
+    sio = Client()
+    sio.connect("http://localhost:" + str(port), namespaces=["/"])
     while True:
         server = serverData[0]
         folder = serverData[1]
@@ -41,12 +43,12 @@ def reader(serverData):
             if i:
                 buffer = i.decode("big5").strip()
                 if (LogOnConsole): logger(buffer)
-                socketio.emit("logs", {"log":buffer + "\n", "folder":folder})
+                sio.emit("side", {"log":buffer + "\n", "folder":folder, "verify":str(app.config['SECRET_KEY'])})
             else:
                 break
         del Servers[folder]
-        socketio.emit("offline", {"folder": folder})
-        if db.get(query.folder == folder).get("autoreboot") == "enable" or folder in rebootlist:
+        sio.emit("side", {"folder": folder, "state":"offline", "verify":str(app.config['SECRET_KEY'])})
+        if serverStatus and (db.get(query.folder == folder).get("autoreboot") == "enable" or folder in rebootlist):
             if folder in rebootlist: rebootlist.remove(folder)
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
@@ -57,9 +59,17 @@ def reader(serverData):
             else:
                 return
             Servers[folder] = serverData
-            socketio.emit("online", {"folder": folder})
+            sio.emit("side", {"folder": folder, "state":"online", "verify":str(app.config['SECRET_KEY'])})
         else:
             return
+
+@socketio.on("side")
+def secretDatas(data):
+    if (str(app.config['SECRET_KEY']) == data.get("verify")):
+        if(data.get("log")):
+            emit("logs", {"log": data.get("log"), "folder": data.get("folder")}, broadcast=True)
+        elif(data.get("state")):
+            emit(data.get("state"), {"folder": data.get("folder")}, broadcast=True)
 
 @socketio.on("reboot")
 def reboot(data):
@@ -103,9 +113,7 @@ def force(data):
     folder = data.get("folder")
     if folder:
         if Servers.get(folder):
-            os.kill(Servers[folder][0].pid, signal.CTRL_C_EVENT)
-            Servers[folder][0].stdin.write(("y\n").encode("utf-8"))
-            Servers[folder][0].stdin.flush()
+            kill_child(Servers[folder][0].pid)
 
 @socketio.on("cmd")
 def command(data):
@@ -126,7 +134,7 @@ def command(data):
                 Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, ""]
             else:
                 return "ERROR"
-            socketio.emit("online", {"folder": folder})
+            emit("online", {"folder": folder}, broadcast=True)
             read = Thread(target=reader, args=(Servers[folder], ))
             read.setDaemon(True)
             read.start()
@@ -137,6 +145,13 @@ def readLog(loc):
             return file.read()
     else:
         return ""
+        
+def kill_child(pid):    
+    parent = psutil.Process(pid)
+    children = parent.children(recursive=True)
+    for child in children:
+        child.kill()
+    gone, still_alive = psutil.wait_procs(children, timeout=5)
     
 def getfiles(folder, ext, selected = None):
     pos = "setup" if ext == ".bat" else "jarFile"
@@ -183,7 +198,6 @@ def admin():
         return redirect(url_for("servers"))
     return redirect(url_for("home"))
     
-    
 db = TinyDB("db.tinydb")
 query = Query()
 
@@ -194,7 +208,8 @@ else:
     db.insert({"secret": secret})
     
 app.config['SECRET_KEY'] = secret
-webpanel = Thread(target=waitress.serve, args=(app, ), kwargs={"host":IPs[Hosts], "port":port})
+
+webpanel = Thread(target=socketio.run, args=(app, ), kwargs={"host":IPs[Hosts], "port":port})
 webpanel.setDaemon(True)
 webpanel.start()
 
@@ -209,6 +224,11 @@ while serverStatus:
         serverStatus = False
     
 logger(Log_stop)
-for i in Servers.values():
-    i[0].stdin.write(("stop\n").encode("utf-8"))
+for i in list(Servers.values()):
+    i[0].stdin.write(("y\nstop\n").encode("utf-8"))
     i[0].stdin.flush()
+    
+for i in list(Servers.values()):
+    logger(Log_wait.format(i[1]))
+    while i in Servers.values():
+        time.sleep(1)

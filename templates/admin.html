@@ -63,29 +63,29 @@
 
 {% block JS %}
 $(document).ready(function(){
-    var socket = io();
+	var socket = io().connect();
 	var locked = true;
+	var logs = "";
     socket.on('logs', function(data) {
         if($("#folder").text() == data.folder){
-			$('#logs').append(data.log);
-			if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
+			logs += data.log;
 		}
     });
 	socket.on('offline', function(data) {
         if($("#folder").text() == data.folder){
 			$("#logs")[0].innerHTML += "Server went off.";
 			$("#turn")[0].value = "Turn on";
-			$("#cp")[0].className = "w3-container w3-red"
-			$("#Control")[0].className  = "w3-bar offline"
+			$("#cp")[0].className = "w3-container w3-red";
+			$("#Control")[0].className  = "w3-bar offline";
+			if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
 		}
     });
 	socket.on('online', function(data) {
         if($("#folder").text() == data.folder){
 			$("#logs")[0].innerHTML = "";
 			$("#turn")[0].value = "Turn off";
-			$("#cp")[0].className = "w3-container w3-green"
-			$("#Control")[0].className  = "w3-bar online"
-			
+			$("#cp")[0].className = "w3-container w3-green";
+			$("#Control")[0].className  = "w3-bar online";
 		}
     });
 	$('#cmdform').submit(function(event) {
@@ -107,11 +107,11 @@ $(document).ready(function(){
 	var setwwb = function(){
 		if(docCookies.getItem("wordwrap") == "true"){
 			$("#logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;");
-			$("#wwb")[0].className = "w3-btn w3-left w3-green"
+			$("#wwb")[0].className = "w3-btn w3-left w3-green";
 		}
 		else{
 			$("#logs")[0].setAttribute("style", "text-align: left;");
-			$("#wwb")[0].className = "w3-btn w3-left w3-red"
+			$("#wwb")[0].className = "w3-btn w3-left w3-red";
 		}
 	};
 	$("#wwb").click(function(){
@@ -126,5 +126,18 @@ $(document).ready(function(){
 		socket.emit('reboot', {folder: $("#folder").text()});
 	});
 	$("#log").scrollTop($("#log")[0].scrollHeight);
+
+	function sleep(ms){return new Promise(r => setTimeout(r, ms))};
+	async function logUpdate(){
+		while(true){
+			if(logs){
+				$('#logs').append(logs);
+				if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
+				logs = "";
+			}
+			await sleep(200);
+		}
+	};
+	logUpdate();
 });
 {% endblock %}

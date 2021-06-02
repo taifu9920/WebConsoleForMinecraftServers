@@ -22,8 +22,9 @@ Log_failed = "Failed"
 
 Log_Incoming = "Incoming connection from {0}, target page {1}"
 Log_format = "{0} | {1} : {2}"
-Log_start = "Server is running now!\nUse Ctrl + 'c' to stop."
+Log_start = "Server is running now!\nEnter 'stop' to stop."
 Log_stop = "Shutdowning..."
+Log_wait = "Waiting for Server `{0}` to close"
 
 LoggerPath = "Logs/"
 #---------------------------

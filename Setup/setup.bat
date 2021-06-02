@@ -1,2 +1,2 @@
-pip install -r requirements.txt
+pip install -U -r requirements.txt
 pause

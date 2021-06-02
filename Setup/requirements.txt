@@ -1,5 +1,7 @@
 Flask
 tinydb
 Flask-WTF
-waitress
 Flask-SocketIO
+python-engineio
+python-socketio
+python-socketio[client]
