@@ -6,3 +6,4 @@ python-engineio
 python-socketio
 python-socketio[client]
 psutil
+eventlet
