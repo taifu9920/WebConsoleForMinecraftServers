@@ -5,3 +5,4 @@ Flask-SocketIO
 python-engineio
 python-socketio
 python-socketio[client]
+psutil
