@@ -1,25 +1,34 @@
 # Web-based-Minecraft-server-control
 ### An web application made with Python, for peoples who wanted to control multiple Minecraft servers with just an URL.
-## P.S Only Windows 10 is tested.
-I don't see much peoples doing this via Python, less for Windows,
+## Now tested on Windows 10, Ubuntu 20.04 LTS.
+I don't see much peoples doing this via Python, most for Linux not Windows,
 So here's the project which allows you to control your Minecraft Server online,
 You can now easily control Minecraft Server using just a URL to login, send commands, view players or the terminal,
 Whatever on PC or Mobile.
 
-## How To Install:
-#### 1. Install Python 3, Remember setup your environment for pip command
-#### 2. Go inside `Setup` folder, run `setup.bat` for installing packages
-#### 3. After this installing, back to the root folder.
-#### 4. You can now open `main.py` to run this program
-#### 5. When running, You can go to the control panel `http://localhost:7878` (port 7878 by default, you can change it in the `config.py` file)
+## How To Install
+# For Windows 10:
+#### 1. Install Python 3 from https://www.python.org/, Remember setup your environment for pip command.
+#### 2. Clone this repo via git bash or download and unzip it.
+#### 3. Go inside `Setup` folder, run `setup.bat` to install required packages.
+#### 4. After this installing, back to the root folder.
+#### 5. You can now open `main.py` to run this program.
+
+# For Ubuntu 20.04 LTS or any Linux OS
+#### 1. Install Python 3 via command `sudo apt install python3 python3-pip`.
+#### 2. Clone this repo via command `git clone https://github.com/taifu9920/Web-based-Minecraft-server-control`.
+#### 3. Use `cd Web-based-Minecraft-server-control/Setup`, then `chmod +x setup.sh`, `./setup.sh`.
+#### 4. After installing required packages, use `cd ..` to get back the parent folder.
+#### 5. Use `chmod +x main.py`, then you can now use `./main.py` to run this program.
 
 ## How To Use:
-#### * Create a folder inside `Server`
-#### * Put your Minecraft Server Core `xxx.jar` inside, name doesn't matter.
-#### * If you had, put your `xxx.bat` inside as well, name doesn't matter. (P.S I recommand not having any PAUSE command inside your bat file, else the logger might acting strange.)
-#### * Now, run and login to this program console(Default secret code is `admin`, HIGHLY RECOMMAND CHANGE IT IN THE `config.py` FIRST), you'll see the folder name.
-#### * Start the server on the console allows you control on the browser.
-#### * Enter commandline `stop` to stop the program and close all remaining server at once.
+#### 1. Create a folder inside `Servers`, eg: `test`, it'll be `Servers/test`.
+#### 2. Put your Minecraft Server Core `xxx.jar` inside the folder you created, name doesn't matter, eg: `Servers/test/server.jar`.
+#### 3. If you had, put your `.sh` or `.bat` executable file inside as well, name doesn't matter, eg: `Servers/test/start.sh` or `Servers/test/start.bat`.
+#### 4. Now, run this program, and open your browser, enter the URL `http://localhost:7878`. (Default port is 7878, you can change it in the file `config.py`)
+#### 5. The default secret code is `admin`, after login you'll see the folder name. (HIGHLY RECOMMAND CHANGE THE SECRET CODE INSIDE `config.py` FIRST)
+#### 6. Now you should be able to control the server you just setup on the browser.
+#### 7. Enter the command `stop` to stop the program and close all remaining server one by one.
 
 
 After Your first run, Few files and folders will be generates.
