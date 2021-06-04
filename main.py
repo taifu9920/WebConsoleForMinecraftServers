@@ -126,7 +126,7 @@ def command(data):
     if folder and cmd:
         server = Servers.get(folder)
         if server:
-            server[0].stdin.write((cmd + "\n").encode(encode))
+            server[0].stdin.write((cmd + "\n").encode(encode_unix))
             server[0].stdin.flush()
         elif cmd == "stop":
             setupfile = db.get(query.folder == folder).get("setup")
