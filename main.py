@@ -195,11 +195,11 @@ def admin():
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
                 autoreboot = db.get(query.folder == folder).get("autoreboot")
-                batlist = getfiles(folder, ".bat", setupfile)
+                execlist = getfiles(folder, ".bat", setupfile) + getfiles(folder, ".sh", setupfile)
                 jarlist= getfiles(folder, ".jar", jarFile)
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
-                return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, batlist= batlist, titleColor = "w3-green" if server else "w3-red", statustag = "online" if server else "offline", ar_e = "selected" if autoreboot == "enable" else "", ar_d = "selected" if autoreboot == "disable" else "")
+                return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, execlist= execlist, titleColor = "w3-green" if server else "w3-red", statustag = "online" if server else "offline", ar_e = "selected" if autoreboot == "enable" else "", ar_d = "selected" if autoreboot == "disable" else "")
         return redirect(url_for("servers"))
     return redirect(url_for("home"))
     
