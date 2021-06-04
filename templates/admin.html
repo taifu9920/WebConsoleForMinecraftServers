@@ -42,9 +42,9 @@
 	<form action="/admin" class="w3-container" method="post">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<input type="hidden" name="folder" value="{{ folder }}"/>
-		<label>Server bat filename</label>
+		<label>Server bat/sh filename</label>
 		<select class="w3-select" name="setup">
-			{{ batlist | safe }}
+			{{ execlist | safe }}
 		</select>
 		<label>Server jar filename</label>
 		<select class="w3-select" name="jarfile">
