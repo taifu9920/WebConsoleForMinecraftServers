@@ -156,7 +156,7 @@ def kill_child(pid):
     
 def getfiles(folder, pos, selected = None):
     if os.path.exists(os.path.join(ServerPath, folder)) and os.path.isdir(os.path.join(ServerPath, folder)):
-        files = [f for f in os.listdir(ServerPath + folder) if (f.endswith(".jar") if pos == "jarfile" else (f.endswith(".bat") or f.endswith(".sh")))]
+        files = [f for f in os.listdir(ServerPath + folder) if (f.endswith(".jar") if pos == "jarFile" else (f.endswith(".bat") or f.endswith(".sh")))]
         if len(files) == 1:
             if selected != files[0]:
                 db.update({pos:files[0]}, query.folder==folder)
@@ -165,7 +165,7 @@ def getfiles(folder, pos, selected = None):
             if selected == None:
                 db.update({pos:files[0]}, query.folder==folder)
             return "".join([(("<option value='{0}'" + (" selected" if selected == f else "") + ">{0}</option>")).format(f) for f in os.listdir("Server/" + folder) if f.endswith(ext)])
-        db.update({pos:files[0]}, query.folder==folder)
+        db.update({pos:None}, query.folder==folder)
     return "".join(["<option value='empty' disabled>No files.</option>"])
     
 @app.route("/admin", methods=['GET', 'POST'])
