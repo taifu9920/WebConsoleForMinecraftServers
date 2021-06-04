@@ -115,11 +115,7 @@ def force(data):
     folder = data.get("folder")
     if folder:
         if Servers.get(folder):
-            if os.name == 'nt':
-                kill_child(Servers[folder][0].pid)
-            else:
-                Servers[folder][0].terminate()
-                Servers[folder][0].kill()
+            kill_child(Servers[folder][0].pid)
 
 @socketio.on("cmd")
 def command(data):
