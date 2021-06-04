@@ -54,7 +54,7 @@ def reader(serverData):
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
             if setupfile:
-                serverData = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
+                serverData = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile) if os.name == "nt" else ["sh", ServerPath + folder + "/" + setupfile], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
                 serverData = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
@@ -135,7 +135,7 @@ def command(data):
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
             if setupfile:
-                Servers[folder] = [subprocess.Popen([ServerPath + folder + "/" + setupfile], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
+                Servers[folder] = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile) if os.name == "nt" else ["sh", ServerPath + folder + "/" + setupfile], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
                 Servers[folder] = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
