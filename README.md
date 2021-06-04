@@ -33,7 +33,7 @@ After Your first run, Few files and folders will be generates.
 ## Extra Files After First Run:
 | Name | Type | Detail |
 | --------------- | --------------- | --------------- |
-| Server | Folder | This is the folder where you can put lots of server inside, sparated by folder |
+| Servers | Folder | This is the folder where you can put lots of server inside, sparated by folder |
 | Logs | Folder | Store all the logs |
 | db.tinydb | Text File | Store some datas and settings |
 
