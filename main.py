@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from flask import Flask, request, render_template, url_for, session, redirect
 from flask_wtf.csrf import CSRFProtect
 from flask_socketio import SocketIO, emit
@@ -55,7 +56,7 @@ def reader(serverData):
             if setupfile:
                 serverData = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
-                serverData = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
+                serverData = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
                 return
             Servers[folder] = serverData
@@ -132,7 +133,7 @@ def command(data):
             if setupfile:
                 Servers[folder] = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
-                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
+                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
                 return "ERROR"
             emit("online", {"folder": folder}, broadcast=True)

@@ -1,4 +1,4 @@
-{% extends 'Base.html' %}
+{% extends 'base.html' %}
 
 {% block Contents %}
 <p></p>
@@ -73,7 +73,7 @@ $(document).ready(function(){
     });
 	socket.on('offline', function(data) {
         if($("#folder").text() == data.folder){
-			$("#logs")[0].innerHTML += "Server went off.";
+			$("#logs div").text($("#logs div").text()+"Server went off.");
 			$("#turn")[0].value = "Turn on";
 			$("#cp")[0].className = "w3-container w3-red";
 			$("#Control")[0].className  = "w3-bar offline";
@@ -82,7 +82,7 @@ $(document).ready(function(){
     });
 	socket.on('online', function(data) {
         if($("#folder").text() == data.folder){
-			$("#logs")[0].innerHTML = "";
+			$("#logs div").text("");
 			$("#turn")[0].value = "Turn off";
 			$("#cp")[0].className = "w3-container w3-green";
 			$("#Control")[0].className  = "w3-bar online";
