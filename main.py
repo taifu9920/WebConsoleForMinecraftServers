@@ -131,17 +131,17 @@ def command(data):
         elif cmd == "stop":
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
-            if setupfile:
-                Servers[folder] = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile) if os.name == "nt" else ["sh", os.path.abspath(ServerPath + folder + "/" + setupfile)], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
-            elif jarFile:
-                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
-            else:
-                return "ERROR"
-            emit("online", {"folder": folder}, broadcast=True)
-            read = Thread(target=reader, args=(Servers[folder], ))
-            read.setDaemon(True)
-            read.start()
-
+            if jarFile:
+                if setupfile:
+                    Servers[folder] = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile) if os.name == "nt" else ["sh", os.path.abspath(ServerPath + folder + "/" + setupfile)], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
+                else:
+                    Servers[folder] = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
+                emit("online", {"folder": folder}, broadcast=True)
+                read = Thread(target=reader, args=(Servers[folder], ))
+                read.setDaemon(True)
+                read.start()
+            return "ERROR"
+            
 def readLog(loc):
     if os.path.exists(loc):
         with open(loc, "r", encoding=encode) as file:
