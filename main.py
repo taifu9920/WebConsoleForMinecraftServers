@@ -28,7 +28,7 @@ def FolderInit(path):
 def logger(msg, code = 0):
     #0 to 4 are available
     FolderInit(LoggerPath)
-    with open(LoggerPath + LogFile, "a+", encoding='UTF-8') as file:
+    with open(LoggerPath + LogFile, "a+", encoding=encode) as file:
         buffer = Log_format.format(types[code], datetime.now(), msg)
         print(buffer)
         file.write(buffer + "\n")
@@ -41,7 +41,7 @@ def reader(serverData):
         folder = serverData[1]
         for i in iter(server.stdout.readline, ""):
             if i:
-                buffer = i.decode("big5").strip()
+                buffer = i.decode(encode).strip()
                 if (LogOnConsole): logger(buffer)
                 sio.emit("side", {"log":buffer + "\n", "folder":folder, "verify":str(app.config['SECRET_KEY'])})
             else:
@@ -53,9 +53,9 @@ def reader(serverData):
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
             if setupfile:
-                serverData = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
+                serverData = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
-                serverData = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, ""]
+                serverData = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
                 return
             Servers[folder] = serverData
@@ -78,7 +78,7 @@ def reboot(data):
         if Servers.get(folder):
             if not folder in rebootlist:
                 rebootlist.append(folder)
-            Servers[folder][0].stdin.write(("stop\n").encode("utf-8"))
+            Servers[folder][0].stdin.write(("stop\n").encode(encode_cmd))
             Servers[folder][0].stdin.flush()
 
 @app.route("/", methods=['GET', 'POST'])
@@ -96,8 +96,9 @@ def home():
 def servers():
     incoming(request)
     if session.get("secret") == password:
+        FolderInit(ServerPath)
         folders = ""
-        for f in [f for f in os.listdir("Server") if os.path.isdir(os.path.join("Server", f))]:
+        for f in [f for f in os.listdir(ServerPath) if os.path.isdir(os.path.join(ServerPath, f))]:
             folders += '<input type="submit" class="w3-button w3-block ' + ("w3-green" if Servers.get(f) else "w3-red") + '" style="width:100%; margin:0;" value="'+f+'" name="folder">'
         return render_template("servers.html", folders=("<div class='w3-red'><h4 style='margin:0'>No Server yet</h4></div>" if folders == "" else folders))
     return redirect(url_for("home"))
@@ -119,19 +120,19 @@ def force(data):
 def command(data):
     folder = data.get("folder")
     cmd = data.get("cmd")
-    folder = folder if folder in [f for f in os.listdir("Server") if os.path.isdir(os.path.join("Server", f))] else None
+    folder = folder if folder in [f for f in os.listdir(ServerPath) if os.path.isdir(os.path.join(ServerPath, f))] else None
     if folder and cmd:
         server = Servers.get(folder)
         if server:
-            server[0].stdin.write((cmd + "\n").encode("utf-8"))
+            server[0].stdin.write((cmd + "\n").encode(encode_cmd))
             server[0].stdin.flush()
         elif cmd == "stop":
             setupfile = db.get(query.folder == folder).get("setup")
             jarFile = db.get(query.folder == folder).get("jarFile")
             if setupfile:
-                Servers[folder] = [subprocess.Popen(os.path.abspath("Server/" + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, os.path.abspath("Server/" + folder + "/" + setupfile)]
+                Servers[folder] = [subprocess.Popen(os.path.abspath(ServerPath + folder + "/" + setupfile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, os.path.abspath(ServerPath + folder + "/" + setupfile)]
             elif jarFile:
-                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = "Server/" + folder, shell=False), folder, ""]
+                Servers[folder] = [subprocess.Popen(default_setup.format(jarFile), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
             else:
                 return "ERROR"
             emit("online", {"folder": folder}, broadcast=True)
@@ -141,10 +142,9 @@ def command(data):
 
 def readLog(loc):
     if os.path.exists(loc):
-        with open(loc, "r") as file:
+        with open(loc, "r", encoding=encode) as file:
             return file.read()
-    else:
-        return ""
+    return ""
         
 def kill_child(pid):    
     parent = psutil.Process(pid)
@@ -155,8 +155,8 @@ def kill_child(pid):
     
 def getfiles(folder, ext, selected = None):
     pos = "setup" if ext == ".bat" else "jarFile"
-    if os.path.exists(os.path.join("Server", folder)) and os.path.isdir(os.path.join("Server", folder)):
-        files = [f for f in os.listdir("Server/" + folder) if f.endswith(ext)]
+    if os.path.exists(os.path.join(ServerPath, folder)) and os.path.isdir(os.path.join(ServerPath, folder)):
+        files = [f for f in os.listdir(ServerPath + folder) if f.endswith(ext)]
         if len(files) == 1:
             if selected != files[0]:
                 db.update({pos:files[0]}, query.folder==folder)
@@ -174,10 +174,10 @@ def admin():
     if session.get("secret") == password:
         if request.method == "POST":
             folder = datas.get("folder")
-            folder = folder if folder in [f for f in os.listdir("Server") if os.path.isdir(os.path.join("Server", f))] else None
+            folder = folder if folder in [f for f in os.listdir(ServerPath) if os.path.isdir(os.path.join(ServerPath, f))] else None
             if folder:
                 server = Servers.get(folder)
-                log = readLog("Server/" + server[1] + "/logs/latest.log") if server else "Server not online yet"
+                log = readLog(ServerPath + server[1] + "/logs/latest.log") if server else "Server not online yet"
                 action = datas.get("action")
                 if not db.get(query.folder == folder):
                     db.insert({"folder":folder, "setup":None, "jarFile":None, "autoreboot":"disable"})
@@ -208,7 +208,7 @@ else:
     db.insert({"secret": secret})
     
 app.config['SECRET_KEY'] = secret
-
+FolderInit(ServerPath)
 webpanel = Thread(target=socketio.run, args=(app, ), kwargs={"host":IPs[Hosts], "port":port})
 webpanel.setDaemon(True)
 webpanel.start()
@@ -225,7 +225,7 @@ while serverStatus:
     
 logger(Log_stop)
 for i in list(Servers.values()):
-    i[0].stdin.write(("y\nstop\n").encode("utf-8"))
+    i[0].stdin.write(("y\nstop\n").encode(encode_cmd))
     i[0].stdin.flush()
     
 for i in list(Servers.values()):

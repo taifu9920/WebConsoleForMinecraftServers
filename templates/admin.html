@@ -20,7 +20,7 @@
 	<div id="log" style="overflow:auto; max-height:400px">
 		<li class="w3-bar">
 		  <div class="w3-bar-item">
-			<pre id="logs" style="text-align: left;">{{ log }}</pre>
+			<pre id="logs" style="text-align: left;"><div>{{ log }}</div></pre>
 		  </div>
 		</li>
 	</div>
@@ -131,7 +131,7 @@ $(document).ready(function(){
 	async function logUpdate(){
 		while(true){
 			if(logs){
-				$('#logs').append(logs);
+				$('#logs div').text($('#logs div').text() + logs);
 				if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
 				logs = "";
 			}

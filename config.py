@@ -4,7 +4,9 @@ port = 7878 # Change this to change the connect port
 password = "admin" # VERY RECOMMAND CHANGE THIS DEFAULT PASSWORD TO ANYTHING ELSE
 #----------------------------
 #-----Other Setting-----
-LogOnConsole = False # Change this to decide showing all server logs on program console or not
+LogOnConsole = True # Change this to decide showing all server logs on program console or not
+LoggerPath = "Logs/"
+ServerPath = "Servers/"
 #----------------------------
 
 
@@ -25,10 +27,10 @@ Log_format = "{0} | {1} : {2}"
 Log_start = "Server is running now!\nEnter 'stop' to stop."
 Log_stop = "Shutdowning..."
 Log_wait = "Waiting for Server `{0}` to close"
-
-LoggerPath = "Logs/"
 #---------------------------
 #-----Other Setting-----
+encode = "big5"
+encode_cmd = "utf-8"
 IPs = ["0.0.0.0", "127.0.0.1"]
 default_setup = "java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar {0} nogui"
 default_jarFile = "server.jar"
