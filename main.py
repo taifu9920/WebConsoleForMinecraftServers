@@ -21,6 +21,7 @@ socketio = SocketIO(app)
 Servers = {}
 rebootlist = []
 LogFile = genLog()
+encode = encode_nt if os.name == "nt" else encode_unix
 
 def FolderInit(path):
     if not PathExist(path):
@@ -79,7 +80,7 @@ def reboot(data):
         if Servers.get(folder):
             if not folder in rebootlist:
                 rebootlist.append(folder)
-            Servers[folder][0].stdin.write(("stop\n").encode(encode_cmd))
+            Servers[folder][0].stdin.write(("stop\n").encode(encode))
             Servers[folder][0].stdin.flush()
 
 @app.route("/", methods=['GET', 'POST'])
@@ -125,7 +126,7 @@ def command(data):
     if folder and cmd:
         server = Servers.get(folder)
         if server:
-            server[0].stdin.write((cmd + "\n").encode(encode_cmd))
+            server[0].stdin.write((cmd + "\n").encode(encode))
             server[0].stdin.flush()
         elif cmd == "stop":
             setupfile = db.get(query.folder == folder).get("setup")
@@ -226,7 +227,7 @@ while serverStatus:
     
 logger(Log_stop)
 for i in list(Servers.values()):
-    i[0].stdin.write(("y\nstop\n").encode(encode_cmd))
+    i[0].stdin.write(("y\nstop\n").encode(encode))
     i[0].stdin.flush()
     
 for i in list(Servers.values()):

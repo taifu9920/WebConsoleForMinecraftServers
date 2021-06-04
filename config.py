@@ -29,8 +29,8 @@ Log_stop = "Shutdowning..."
 Log_wait = "Waiting for Server `{0}` to close"
 #---------------------------
 #-----Other Setting-----
-encode = "utf-8"
-encode_cmd = "utf-8"
+encode_nt = "big5"
+encode_unix = "utf-8"
 IPs = ["0.0.0.0", "127.0.0.1"]
 default_setup = "java -Xms1024m -Xmx1024m -XX:PermSize=128m -jar {0} nogui"
 default_jarFile = "server.jar"
