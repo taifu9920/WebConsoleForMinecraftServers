@@ -159,7 +159,7 @@ def kill_child(pid):
     gone, still_alive = psutil.wait_procs(children, timeout=5)
     
 def getfiles(folder, ext, selected = None):
-    pos = "setup" if ext == ".bat" else "jarFile"
+    pos = "jarFile" if ext == ".jar" else "setup"
     if os.path.exists(os.path.join(ServerPath, folder)) and os.path.isdir(os.path.join(ServerPath, folder)):
         files = [f for f in os.listdir(ServerPath + folder) if f.endswith(ext)]
         if len(files) == 1:
