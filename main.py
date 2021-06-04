@@ -154,10 +154,9 @@ def kill_child(pid):
         child.kill()
     gone, still_alive = psutil.wait_procs(children, timeout=5)
     
-def getfiles(folder, ext, selected = None):
-    pos = "jarFile" if ext == ".jar" else "setup"
+def getfiles(folder, pos, selected = None):
     if os.path.exists(os.path.join(ServerPath, folder)) and os.path.isdir(os.path.join(ServerPath, folder)):
-        files = [f for f in os.listdir(ServerPath + folder) if f.endswith(ext)]
+        files = [f for f in os.listdir(ServerPath + folder) if (f.endswith(".jar") if pos == "jarfile" else (f.endswith(".bat") or f.endswith(".sh")))]
         if len(files) == 1:
             if selected != files[0]:
                 db.update({pos:files[0]}, query.folder==folder)
@@ -166,6 +165,7 @@ def getfiles(folder, ext, selected = None):
             if selected == None:
                 db.update({pos:files[0]}, query.folder==folder)
             return "".join([(("<option value='{0}'" + (" selected" if selected == f else "") + ">{0}</option>")).format(f) for f in os.listdir("Server/" + folder) if f.endswith(ext)])
+        db.update({pos:files[0]}, query.folder==folder)
     return "".join(["<option value='empty' disabled>No files.</option>"])
     
 @app.route("/admin", methods=['GET', 'POST'])
@@ -191,8 +191,8 @@ def admin():
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
                 autoreboot = db.get(query.folder == folder).get("autoreboot")
-                execlist = getfiles(folder, ".bat", setupfile) + getfiles(folder, ".sh", setupfile)
-                jarlist= getfiles(folder, ".jar", jarFile)
+                execlist = getfiles(folder, "setup", setupfile)
+                jarlist= getfiles(folder, "jarFile", jarFile)
                 setupfile = db.get(query.folder == folder).get("setup")
                 jarFile = db.get(query.folder == folder).get("jarFile")
                 return render_template("admin.html", folder = folder, status = "off" if server else "on", log = log, jarlist= jarlist, execlist= execlist, titleColor = "w3-green" if server else "w3-red", statustag = "online" if server else "offline", ar_e = "selected" if autoreboot == "enable" else "", ar_d = "selected" if autoreboot == "disable" else "")
