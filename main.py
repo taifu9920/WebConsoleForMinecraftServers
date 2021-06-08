@@ -165,7 +165,7 @@ def getfiles(folder, pos, selected = None):
         elif len(files) > 1:
             if selected == None:
                 db.update({pos:files[0]}, query.folder==folder)
-            return "".join([(("<option value='{0}'" + (" selected" if selected == f else "") + ">{0}</option>")).format(f) for f in os.listdir("Server/" + folder) if f.endswith(ext)])
+            return "".join([(("<option value='{0}'" + (" selected" if selected == f else "") + ">{0}</option>")).format(f) for f in os.listdir(ServerPath + folder) if f.endswith(ext)])
         db.update({pos:None}, query.folder==folder)
     return "".join(["<option value='empty' disabled>No files.</option>"])
     
