@@ -7,3 +7,4 @@ python-socketio
 python-socketio[client]
 psutil
 eventlet
+flask-ipban

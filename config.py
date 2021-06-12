@@ -7,6 +7,9 @@ password = "admin" # VERY RECOMMAND CHANGE THIS DEFAULT PASSWORD TO ANYTHING ELS
 LogOnConsole = False # Change this to decide showing all server logs on program console or not
 LoggerPath = "Logs/"
 ServerPath = "Servers/"
+BanCount = 10
+BanSeconds = 43200
+PersistBan = True
 #----------------------------
 
 
