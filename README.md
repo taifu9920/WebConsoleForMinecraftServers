@@ -29,7 +29,7 @@ Whatever on PC or Mobile.
 #### 5. The default secret code is `admin`, after login you'll see the folder name. (HIGHLY RECOMMAND CHANGE THE SECRET CODE INSIDE `config.py` FIRST)
 #### 6. Now you should be able to control the server you just setup on the browser.
 #### 7. Enter the command `stop` to stop the program and close all remaining server one by one.
-
+#### 8. For more commands please enter `help` to view.
 
 After Your first run, Few files and folders will be generates.
 ## Original Files:
@@ -37,6 +37,7 @@ After Your first run, Few files and folders will be generates.
 | --------------- | --------------- | --------------- |
 | Setup | Folder | Contains all setup files for Installing necessary packages. |
 | templates | Folder | Contains all HTML files for HTTP access. |
+| ip_ban | Folder | Setting file for ip_ban module |
 | main.py | Python Executable | The entry point of this program. |
 | config.py | Python Executable | The config of program |
 ## Extra Files After First Run:
