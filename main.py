@@ -201,8 +201,8 @@ def command(data):
         
 def readLog(loc):
     if os.path.exists(loc):
-        with open(loc, "r", encoding=encode) as file:
-            return file.read()
+        with open(loc, "rb") as file:
+            return file.read().decode(encode_unix, errors="ignore")
     return ""
         
 def kill_child(pid):    
