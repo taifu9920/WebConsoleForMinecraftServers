@@ -8,3 +8,4 @@ python-socketio[client]
 psutil
 eventlet
 flask-ipban
+matplotlib
