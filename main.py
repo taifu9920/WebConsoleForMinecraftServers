@@ -9,7 +9,9 @@ from tinydb import TinyDB, Query
 from threading import Thread
 from config import *
 import matplotlib.pyplot as plt
-import os, subprocess, time, psutil, platform, base64, io
+import os, subprocess, time, psutil, platform, base64, io, warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, message="Starting a Matplotlib GUI outside of the main thread will likely fail.")
 
 incoming = lambda req: logger(Log_Incoming.format(req.remote_addr, req.path), 1)
 PathExist = lambda path: os.path.exists(path)
