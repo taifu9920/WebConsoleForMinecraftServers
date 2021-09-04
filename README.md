@@ -1,9 +1,9 @@
-# Web-based-Minecraft-server-control
-### An web application made with Python, for peoples who wanted to control multiple Minecraft servers with just an URL.
+# Web Console For Minecraft Servers
+### An web application made with Python, design to maintenance more than one server, via HTML. 
 ## Now tested on Windows 10, Ubuntu 20.04 LTS.
-I don't see much peoples doing this via Python, most for Linux not Windows,
-So here's the project which allows you to control your Minecraft Server online,
-You can now easily control Minecraft Server using just a URL to login, send commands, view players or the terminal,
+I don't see much peoples doing this with Python, and most for Linux not Windows.
+So I tried to make this project that allows control for all Minecraft servers with an URL.
+This can be used to send commands to specific server, reboot, and view online players(WIP).
 Whatever on PC or Mobile.
 
 ## How To Install
@@ -52,9 +52,10 @@ You can change your port, binding IP from Internet or Localhost, secret code for
 
 # Incomplete:
 ### * 200ms buffer load for logs.
-### * A better HTML interface with designs
-### * Page for changing config file
+### * ~~A better HTML interface with designs~~
+### * ~~Page for changing config file~~
 ### * Page for viewing past logs
 ### * View all plugins
+### * View online players
 ### * Plugin Installion on HTML interface
-### * More information like RAM, server runtime, etc.
+### * ~~More information like RAM~~, server runtime, etc.
