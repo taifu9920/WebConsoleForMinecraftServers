@@ -6,6 +6,4 @@ regex:
   - ^\/logout$
   - ^\/static\/script\.js$
   - ^\/static\/style\.css$
-  - ^\/static\/sunny\.png$
-  - ^\/static\/night\.png$
   - ^\/socket\.io\/\?

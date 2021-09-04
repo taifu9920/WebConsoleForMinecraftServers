@@ -1,15 +1,23 @@
 {% extends 'base.html' %}
 
+{% block Header %}
+<ul><li>Minecraft Server Controller</li></ul>
+{% endblock %}
+
 {% block Contents %}
 <p></p>
-<div class="w3-card-4 w3-center">
-	<div class="w3-container w3-green"><h2>ServerLists</h2></div>
+<div class="SvList w3-card-4 w3-center">
+	<ul class="Header w3-container w3-green"><li>ServerLists</li></ul>
 	<form action="/admin" id="ServerList" class="w3-bar" style="width:100%; max-width:900px;" method="post">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		{{ folders | safe }}
 	</form>
 </div>
-<input class="w3-btn w3-blue" type="button" value="Logout" onclick="location.href='/logout'">
+
+<div class="System w3-card-4 w3-center">
+	<ul class="Header w3-container w3-black"><li>System Info</li></ul>
+	{{ Info | safe }}
+</div>
 {% endblock %}
 
 {% block JS %}

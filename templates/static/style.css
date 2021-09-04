@@ -1,333 +1,258 @@
 @charset "utf-8";
 /* Global Styles */
-body {
-	padding-left: 2.275%;
-	padding-right: 2.275%;
-}
-h2 {
-	font-weight: bold;
-}
-#mask {
-	position:           fixed;
-    z-index:            1;
-    top:                0;
-    left:               0;
-    width:              100%;
-    height:             100%;
-    background-color:   gray;
-}
-.switch {
-  position: fixed;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-  right: 5px;
-  top: 5px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 40px;
-  width: 40px;
-  left: 0px;
-  top: 0;
-  bottom: 0;
-  margin: auto 0;
-  transition: 0.4s;
-  box-shadow: 0 0px 15px #2020203d;
-  background: white url('sunny.png');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-input:checked + .slider {
-  background-color: #2196f3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(24px);
-  -ms-transform: translateX(24px);
-  transform: translateX(24px);
-  background: white url('night.png');
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-.dark label, .dark input{
-	color: white;
-}
-
-.w3-container, .w3-panel {
-    padding: 0;
-}
-
-pre {
-	display: table;
-}
-#CopyButton {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  overflow: unset;
-  outline: unset;
-}
-
-#CopyButton .Popup {
-  visibility: hidden;
-  width: 100px;
-  background-color: greenyellow;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -50px;
-}
-
-#CopyButton .Popup::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: greenyellow transparent transparent transparent;
-}
-#CopyButton .show {
-  visibility: visible;
-  animation: fadeIn 1s;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-}
-h2{
-	color: white;
-}
-/* Header */
-header {
-	text-align: center;
-	display: block;
-}
-header img {
-	max-height: 100%;  
-    max-width: 100%; 
-    width: auto;
-    height: auto;
-}
-hr {
-	background-color: rgba(208,207,207,1.00);
-	height: 1px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-/* Main Content sections */
-.Content, .Content form, .Content form .maxInput, .Content form input, .Content form textarea {
-	margin-left: auto;
-	margin-right: auto;
-}
-.Content form input, .Content form textarea {
-	width: 50%;
-}
-.Content form textarea {
- 	resize : none;
-}
-.Content {
-	display: block;
-	font-family: sans-serif;
-	font-size: 14px;
-	font-weight: bold;
-	max-width: 804.850px;
-}
-.Content form{
-	max-width: 450px;
-}
-.maxInput {
-	max-width: 325px;
-}
-.space {
-	height: 10px;
-}
-p {
-	margin-top: 10px;
-	margin-bottom: 0px;
-}
-button {
-	margin-top: 5px;
-	margin-bottom: 10px;
-}
-#Control .disable{
-	width: 0px;
-}
-#Control {
-	max-width: unset;
-	clear: unset;
-	display: table;
-	width: 100%;
-	margin: 0px;
-	font-weight: bold;
-}
-#Control input {
+html, body{
+	margin: 0;
+	background-color: darkgray;
 	height: 100%;
-	width: 20%;
-	padding: 1% 2% 1% 2%;
-	margin: 0;
-}
-.offline input {
-	color: #F44336;
-}
-.online input {
-	color: #4CAF50;
-}
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-th, td {
-  padding: 8px;
-  text-align: left;
-  border-bottom: 2px solid black;
-}
-.dark th, td{
-	border-bottom: 2px solid gray;
+	width: 100%;
 }
 
-#log li {
-	color: #000000;
-	
-}
-#log li div {
-	padding: 0;
-}
-#logs {
-	margin: 0;
-	
+* {
+	font-family: 'Source Sans Pro', sans-serif;
 }
 
-.dark #log li {
-	color: #FFFFFF;
-	
-}
-.dark h4 {
-	color: #000000;
+a {
+	color: white;
 }
 
-
-
-.dark {
-	background: #595959;
-}
-
-.dark h2 {
-	color: black;
-}
-
-.dark footer p{
-	color: black;
-}
-
-.dark input, .dark textarea {
-	background-color: #707070;
-	border-bottom-color: black;
-}
-
-.dark input:focus, .dark textarea:focus{
+Form input:focus{
 	outline: none;
 }
 
-.dark .w3-bar-item {
-	background-color: unset;
+ul {
+	padding: 0 !important;
+	height: auto;
+	margin: 0;
 }
 
-.dark hr {
-	background: #808080;
-	border-top-color: #808080;
+li {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  height: 100%;
 }
 
-tr:hover {background-color:blanchedalmond;}
-.dark tr:hover {background-color:gray;}
-
-.code input::placeholder {
-	color: #2196F3;
+/* Header */
+.Header {
+	background-color: darkred;
+	color: white;
+	text-align: center;
+	height: 7%;
+	font-size: 30px;
+	min-height: 50px;
+	padding: 0;
 }
-#configure input::placeholder {
-	color: orange;
+
+.Header ul {
+	width: 100%;
+}
+
+.Header ul li {
+	min-width: 150px;
+}
+
+.Logout {
+	width: 20%;
+	min-width: 125px;
+	font-size: 20px;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+.describe {
+	font-size: 20px;
+}
+
+/* Content */
+.Content {
+	overflow: auto;
+	height: 86%;
+	display: flex;
+}
+
+.Content ul {
+	width: 100%;
+	
+}
+
+.Login Form input{
+	width: 50%;
+	margin: auto;
+	background-color: gray;
+	color: white;
+	font-size: 15px;
+	font-family: monospace;
+}
+
+.Login Form input::placeholder{
+	color: white;
+}
+
+.Terminal {
+	width: 70%;
+	margin: 10px;
+	height: auto;
+	min-height: 340px;
+	
+}
+
+.Panel {
+	height: 94%; 
+	flex-direction: unset; 
+	overflow: auto;
+}
+
+.Configure {
+	width: 30%;
+	margin: 10px;
+	min-height: 340px;
+}
+
+.Login {
+	max-width: 600px;
+	width: 60%;
+	height: 35%;
+	margin: auto;
+	min-height: 200px;
+	max-height: 200px;
+}
+
+.Login ul {
+	height: 30%;
+	
+}
+
+.Login ul li div {
+	height: 100%;
+}
+
+#Control {
+	height: 5%;
+	min-height: 38.4px;
+}
+
+#Control input {
+	width: 25%;
+	color: white;
+}
+
+.scram {
+	background: repeating-linear-gradient(
+	  45deg,
+	  #fec820,
+	  #fec820 20px,
+	  #1e2221 20px,
+	  #1e2221 40px
+	);
+	font-family: sans-serif;
+	font-weight: bold;
+}
+
+.SvList {
+	width: 40%;
+	min-width: 200px;
+	margin: 10px;
+	height: auto;
+	overflow: auto;
+}
+
+#ServerList {
+	width: 100%;
+	max-width: 900px;
+	display: unset;
+}
+
+.System {
+	width: 60%;
+	height: auto;
+	margin: 10px;
+}
+
+.logs {
+	color: white;
+	background-color: gray;
+	border-color: black;
+	border-width: 2px;
+	border-left-style: solid;
+	border-right-style: solid;
+	height: 79%;
+	margin: 0px;
+	overflow: auto;
+}
+
+#graph img {
+	width: 49%;
+	
+}
+
+.code {
+	width: 100%;
+}
+
+#cmd {
+	width: 80%;
+	min-height: 38.4px;
+}
+
+#cmd input {
+	height: 100%;
+}
+
+#cmdSend {
+	width: 20%;
+	height: 100%;
+	min-height: 39.4px;
+}
+
+#cmdform {
+	padding: 0;
+	display: flex;
+	height: 7%;
 }
 
 /* Footer */
-footer .footerNote {
-	font-family: sans-serif;
-	font-size: 14px;
-	line-height: 18px;
-	color: rgba(104,103,103,1.00);
-	font-weight: 700;
-	margin-bottom: 15px;
-}
-footer .footerNote span {
-	color: rgba(181,178,178,1.00);
-	font-weight: 400;
-}
-/* Media query for Mobile devices*/
-@media only screen and (min-width : 285px) and (max-width : 480px) {
-	#Control input {
-		padding: 0px;
-	}
-	/* Footer */
-	footer {
-		display: block;
-		text-align: center;
-		font-family: sans-serif;
-	}
+.footer {
+	background-color: gray;
+	height: 7%;
+	text-align: center;
+	color: white;
+	font-size: 20px;
+	min-height: 50px;
 }
 
-/* Media Query for Tablets */
-@media only screen and (min-width : 520.4px) and (max-width : 860px) {
-	footer {
-		display: block;
-		text-align: center;
-		font-family: sans-serif;
+@media only screen and (max-height : 850px) {
+	.Header {
+		min-Height: unset;
 	}
+	
 }
-/* Desktops and laptops  */
-@media only screen and (min-width:861px) {
-	footer .footerNote {
-		float: right;
-		margin-right: 3%;
-		font-family: sans-serif;
+
+@media only screen and (max-height : 640px) {
+	#cmdSend {
+		min-height: unset;
+	}
+	
+	#cmd {
+		min-height: unset;
+	}
+	
+}
+
+@media only screen and (max-width : 500px) {
+	body{
+		overflow: auto;
+	}
+
+	.Header {
+		width: 513px;
+	}
+
+	.Login {
+		width: 300px;
+		height: 227px;
+	}
+	
+	.footer {
+		width: 513px;
 	}
 }

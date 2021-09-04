@@ -35,22 +35,3 @@ var docCookies = {
     return aKeys;
   }
 };
-
-function setThemeFromCookie() {
-	var body = document.getElementsByTagName('body')[0];
-	body.className = docCookies.getItem("theme") == "true" ? 'dark' : '';
-	document.getElementById("slider").checked = docCookies.getItem("theme") == "true";
-}
-
-function toggleTheme() {
-	docCookies.setItem("theme", !(docCookies.getItem("theme") == "true"), Infinity);
-	setThemeFromCookie();
-}
-
-function Load() {
-	setThemeFromCookie()
-	document.getElementById("slider").addEventListener("change", toggleTheme);
-	document.getElementById("mask").remove();
-}
-
-window.addEventListener("load", Load)

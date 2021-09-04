@@ -1,19 +1,30 @@
 {% extends 'base.html' %}
 
-{% block Contents %}
-<p></p>
+{% block Header %}
+<ul><li>Minecraft Server Controller</li></ul>
+{% endblock %}
 
-<div class="w3-card-4 w3-center">
-	<div class="w3-container w3-blue"><h2>Admin Login</h2></div>
-	<div class="w3-text-blue">
-		<h5>Please input your secret code to continue.</h5>
-	</div>
-	<form action="/" class="w3-container" method="post">
-		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-		<p>
-			<div id="secret" class="code"><input class="w3-input w3-animate-input w3-center" placeholder="Secret Code" name="Admin" type="password"></div>
-		</p>
-		<button type="submit" class="w3-btn w3-blue">Enter</button>
-	</form>
-</div>
+{% block Contents %}
+<ul>
+	<li>
+		<div class="Login w3-card-4 w3-center">
+			<ul class="Header w3-container w3-blue">
+				<li>
+					Login
+				</li>
+			</ul>
+			<div class="describe w3-text-blue"> Please Login to continue. </div>
+			<form action="/" class="w3-container" method="post">
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+				<p>
+					<div id="secret" class="code"><input class="w3-input w3-animate-input w3-center" placeholder="Password" name="Admin" type="password"></div>
+				</p>
+				<button type="submit" class="w3-btn w3-blue">Enter</button>
+				<p></p>
+			</form>
+		</div>
+	</li>
+</ul>
+
+
 {% endblock %}

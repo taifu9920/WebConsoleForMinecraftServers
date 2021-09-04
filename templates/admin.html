@@ -1,43 +1,37 @@
 {% extends 'base.html' %}
 
-{% block Contents %}
-<p></p>
-<div class="w3-card-4 w3-center">
-	<div id="cp" class="w3-container {{ titleColor }}"><h2 id="folder">{{ folder }}</h2></div>
-	<div id="Control" class="w3-bar {{ statustag }}">
-		<input class="w3-bar-item w3-button" type="button" id="reboot" name="action" value="Reboot">
-		<input class="w3-bar-item w3-button" type="button" id="turn" name="action" value="Turn {{ status }}">
-		<input class="w3-bar-item w3-button" type="button" id="force" name="action" value="Force Shutdown">
-		<input class="w3-bar-item w3-button" type="button" value="Server List" onclick="location.href='/servers'">
-		<input class="w3-bar-item w3-button" type="button" value="Logout" onclick="location.href='/logout'">
-	</div>
+{% block Header %}
+<ul><li id="folder" class="{{ titleColor }}">{{ folder }}</li></ul>
+{% endblock %}
+
+{% block Functions %}
+<div id="Control" class="w3-bar {{ statustag }}">
+	<input class="w3-bar-item w3-button" type="button" id="reboot" name="action" value="Reboot">
+	<input class="w3-bar-item w3-button" type="button" id="turn" name="action" value="Turn {{ status }}">
+	<input class="scram w3-bar-item w3-button" type="button" id="force" name="action" value="Scram">
+	<input class="w3-bar-item w3-button" style="background-color: darkred;" type="button" value="Server List" onclick="location.href='/servers'">
 </div>
+{% endblock %}
 
-<div class="space"></div>
+{% block contentStyle %}
+height: 81%;
+{% endblock %}
 
-<div class="w3-card-4 w3-center">
-	<div class="w3-container w3-blue"><h2>Send Commands</h2></div>
-	<div id="log" style="overflow:auto; max-height:400px">
-		<li class="w3-bar">
-		  <div class="w3-bar-item">
-			<pre id="logs" style="text-align: left;"><div>{{ log }}</div></pre>
-		  </div>
-		</li>
-	</div>
-	<div class="w3-container w3-blue"><input type="button" value="word wrap" id="wwb" class="w3-btn w3-left w3-green"></div>
+{% block Contents %}
+<div class="Terminal w3-card-4 w3-center">
+	<ul class="Header w3-container w3-black"><li>Terminal</li></ul>
+	<pre class="logs">{{ log }}</pre>
+	<div class="w3-container w3-black" style="padding: 0; height: 7%"><input type="button" value="word wrap" id="wwb" style="height: 100%;" class="w3-btn w3-left w3-green"></div>
 	<form id="cmdform" action="/admin" class="w3-container" method="post">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 		<input type="hidden" name="folder" value="{{ folder }}"/>
-		<p> </p>
-		<div class="code"><input class="w3-input w3-animate-input w3-center" placeholder="CommandLine" autocomplete="off" name="Admin" type="text"></div>
-		<button id="cmdSend" type="submit" class="w3-btn w3-blue">Send</button>
+		<div id="cmd"><input class="w3-input w3-animate-input w3-center" placeholder="Command" autocomplete="off" name="Admin" type="text"></div>
+		<button id="cmdSend" type="submit" class="w3-btn w3-black">Enter</button>
 	</form>
 </div>
 
-<div class="space"></div>
-
-<div id="configure" class="w3-card-4 w3-center">
-	<div class="w3-container w3-orange"><h2>Configure</h2></div>
+<div class="Configure w3-card-4 w3-center">
+	<ul class="Header w3-container w3-orange"><li>Configure</li></ul>
 	<p></p>	
 	<form action="/admin" class="w3-container" method="post">
 		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -73,25 +67,27 @@ $(document).ready(function(){
     });
 	socket.on('offline', function(data) {
         if($("#folder").text() == data.folder){
-			$("#logs div").text($("#logs div").text()+"Server went off.");
+			$(".logs div").text($(".logs div").text()+"Server went off.");
 			$("#turn")[0].value = "Turn on";
-			$("#cp")[0].className = "w3-container w3-red";
+			$("#folder")[0].className = "w3-red";
 			$("#Control")[0].className  = "w3-bar offline";
-			if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
+			if(locked){$(".logs").scrollTop($(".logs")[0].scrollHeight);}
 		}
     });
 	socket.on('online', function(data) {
         if($("#folder").text() == data.folder){
-			$("#logs div").text("");
+			$(".logs div").text("");
 			$("#turn")[0].value = "Turn off";
-			$("#cp")[0].className = "w3-container w3-green";
+			$("#folder")[0].className = "w3-green";
 			$("#Control")[0].className  = "w3-bar online";
 		}
     });
 	$('#cmdform').submit(function(event) {
-        socket.emit('cmd', {cmd: $('.code input').val(), folder: $("#folder").text()});
-		$(".code input")[0].value = "";
-        return false;
+		if ($('#cmd input').val() != ""){
+			socket.emit('cmd', {cmd: $('#cmd input').val(), folder: $("#folder").text()});
+			$("#cmd input")[0].value = "";
+		}
+		return false;
     });
 	$('#turn').click(function(event) {
         socket.emit('cmd', {cmd: "stop", folder: $("#folder").text()});
@@ -99,18 +95,18 @@ $(document).ready(function(){
 		else{$("#turn")[0].value = "Turn on";}
         return false;
     });
-	$("#log").on("scroll", function(event){
+	$(".logs").on("scroll", function(event){
 		pos = $(event.currentTarget);
 		if(pos[0].scrollHeight - pos.scrollTop() <= pos.outerHeight() + 25){locked = true;}
 		else{locked = false;}
 	});
 	var setwwb = function(){
 		if(docCookies.getItem("wordwrap") == "true"){
-			$("#logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;");
+			$(".logs")[0].setAttribute("style", "text-align: left; white-space: pre-wrap; overflow-wrap: anywhere;");
 			$("#wwb")[0].className = "w3-btn w3-left w3-green";
 		}
 		else{
-			$("#logs")[0].setAttribute("style", "text-align: left;");
+			$(".logs")[0].setAttribute("style", "text-align: left;");
 			$("#wwb")[0].className = "w3-btn w3-left w3-red";
 		}
 	};
@@ -125,14 +121,14 @@ $(document).ready(function(){
 	$("#reboot").click(function(){
 		socket.emit('reboot', {folder: $("#folder").text()});
 	});
-	$("#log").scrollTop($("#log")[0].scrollHeight);
+	$(".logs").scrollTop($(".logs")[0].scrollHeight);
 
 	function sleep(ms){return new Promise(r => setTimeout(r, ms))};
 	async function logUpdate(){
 		while(true){
 			if(logs){
-				$('#logs div').text($('#logs div').text() + logs);
-				if(locked){$("#log").scrollTop($("#log")[0].scrollHeight);}
+				$('.logs').text($('.logs').text() + logs);
+				if(locked){$(".logs").scrollTop($(".logs")[0].scrollHeight);}
 				logs = "";
 			}
 			await sleep(200);

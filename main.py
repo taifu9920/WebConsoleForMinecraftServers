@@ -8,7 +8,8 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 from threading import Thread
 from config import *
-import os, subprocess, time, psutil
+import matplotlib.pyplot as plt
+import os, subprocess, time, psutil, platform, base64, io
 
 incoming = lambda req: logger(Log_Incoming.format(req.remote_addr, req.path), 1)
 PathExist = lambda path: os.path.exists(path)
@@ -50,6 +51,44 @@ def logger(msg, code = 0, show = True):
         buffer = Log_format.format(types[code], datetime.now(), msg)
         if show: print(buffer)
         file.write(buffer + "\n")
+
+def infoHTML():
+    title, usage = [], []
+    ram = psutil.virtual_memory()
+    for i in Servers.values():
+        title.append(i[1])
+        usage.append(ramUsage(i[0].pid))
+    if not Servers: title = ["Free"] ; usage = [1]
+    f = plt.figure(figsize=(5,5))
+    def func(pct, allvals):
+        absolute = int(round(pct / 100 * sum(allvals)))
+        return "{:.2f}%\n({:.2f} MB)".format(pct, absolute/1024**2)
+    pie = plt.pie(usage, labels = title, autopct=lambda pct: func(pct, usage), colors=None if Servers else ["green"])
+    for i in pie[2]: i.set_color("white")
+    for i in pie[1]: i.set_color("white")
+    plt.title("Server RAM Usage", color="white", fontsize="large", fontweight="bold")
+    server = io.BytesIO()
+    plt.savefig(server, format='png', transparent=True)
+    server.seek(0)
+    f.clear()
+    plt.close()
+    f = plt.figure(figsize=(5,5))
+    data = [ram.available , ram.total - ram.available - sum(usage), sum(usage)]
+    pie = plt.pie(data, labels=["Used", "Free", "Servers"], colors=["red", "green", "blue"], autopct=lambda pct: func(pct, data))
+    for i in pie[2]: i.set_color("white")
+    for i in pie[1]: i.set_color("white")
+    plt.title("Total RAM Usage", color="white", fontsize="large", fontweight="bold")
+    ramgraph = io.BytesIO()
+    plt.savefig(ramgraph, format='png', transparent=True)
+    ramgraph.seek(0)
+    f.clear()
+    plt.close()
+    return """<div id="info"><ul><li>OS: {2}</li><li>Processor: {3}</li></ul></div><div id='graph'>
+        <img id='Servers' src='data:image/png;base64, {0}'></img>
+        <img id='Memory' src='data:image/png;base64, {1}'></img>
+    </div>
+    """.format(base64.b64encode(server.getvalue()).decode("utf-8"), \
+    base64.b64encode(ramgraph.getvalue()).decode("utf-8"), platform.system() + " " + platform.release(), platform.machine())
 
 def reader(serverData):
     sio = Client()
@@ -133,7 +172,7 @@ def servers():
         folders = ""
         for f in [f for f in os.listdir(ServerPath) if os.path.isdir(os.path.join(ServerPath, f))]:
             folders += '<input type="submit" class="w3-button w3-block ' + ("w3-green" if Servers.get(f) else "w3-red") + '" style="width:100%; margin:0;" value="'+f+'" name="folder">'
-        return render_template("servers.html", folders=("<div class='w3-red'><h4 style='margin:0'>No Server yet</h4></div>" if folders == "" else folders))
+        return render_template("servers.html", folders=("<div class='w3-red'><h4 style='margin:0'>No Server yet</h4></div>" if folders == "" else folders), Info = infoHTML())
     logger("{0} Tried to use wrong password enter Servers, sending back to home.".format(request.remote_addr), 2)
     ip_ban.add()
     return redirect(url_for("home"))
@@ -141,7 +180,10 @@ def servers():
 @app.route("/logout", methods=['GET'])
 def logout():
     incoming(request)
-    del session["secret"]
+    try:
+        del session["secret"]
+    except Exception:
+        "Never login before"
     logger("{0} Has been logout, sending back to home.".format(request.remote_addr), 1)
     return redirect(url_for("home"))
     
@@ -212,6 +254,13 @@ def kill_child(pid):
         child.kill()
     gone, still_alive = psutil.wait_procs(children, timeout=5)
     
+def ramUsage(pid):
+    ram = psutil.Process(pid).memory_info().rss
+    parent = psutil.Process(pid)
+    children = parent.children(recursive=True)
+    for child in children: ram += psutil.Process(child.pid).memory_info().rss
+    return ram
+
 def getfiles(folder, pos, selected = None):
     if os.path.exists(os.path.join(ServerPath, folder)) and os.path.isdir(os.path.join(ServerPath, folder)):
         files = [f for f in os.listdir(ServerPath + folder) if (f.endswith(".jar") if pos == "jarFile" else (f.endswith(".bat") or f.endswith(".sh")))]
@@ -236,7 +285,7 @@ def admin():
             folder = folder if folder in [f for f in os.listdir(ServerPath) if os.path.isdir(os.path.join(ServerPath, f))] else None
             if folder:
                 server = Servers.get(folder)
-                log = readLog(ServerPath + server[1] + "/logs/latest.log") if server else "Server not online yet"
+                log = readLog(ServerPath + server[1] + "/logs/latest.log") if server else ""
                 action = datas.get("action")
                 if not db.get(query.folder == folder):
                     db.insert({"folder": folder, "setup": None, "jarFile": None, "autoreboot": "disable"})
