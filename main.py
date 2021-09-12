@@ -75,7 +75,7 @@ def infoHTML():
     f.clear()
     plt.close()
     f = plt.figure(figsize=(5,5))
-    data = [ram.available , ram.total - ram.available - sum(usage), sum(usage)]
+    data = [ram.total - ram.available - sum(usage), ram.available, sum(usage)]
     pie = plt.pie(data, labels=["Used", "Free", "Servers"], colors=["red", "green", "blue"], autopct=lambda pct: func(pct, data))
     for i in pie[2]: i.set_color("white")
     for i in pie[1]: i.set_color("white")
