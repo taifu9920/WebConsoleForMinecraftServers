@@ -1,12 +1,18 @@
 # Web Console For Minecraft Servers
-### An web application made with Python, design to maintenance more than one server, via HTML. 
+### A web application made with Python, design to maintenance more than one server, via HTML. 
+![image](https://github.com/taifu9920/WebConsoleForMinecraftServers/blob/main/Demo/Login%20Page.png)
+![image](https://github.com/taifu9920/WebConsoleForMinecraftServers/blob/main/Demo/Control%20Panel.png)
+![image](https://github.com/taifu9920/WebConsoleForMinecraftServers/blob/main/Demo/Admin%20Console%20Inactive.png)
+![image](https://github.com/taifu9920/WebConsoleForMinecraftServers/blob/main/Demo/Admin%20Console%20Active.png)
+![image](https://github.com/taifu9920/WebConsoleForMinecraftServers/blob/main/Demo/Terminal%20Log.png)
 ## Now tested on Windows 10, Ubuntu 20.04 LTS.
 I don't see much peoples doing this with Python, and most for Linux not Windows.
 So I tried to make this project that allows control for all Minecraft servers with an URL.
 This can be used to send commands to specific server, reboot, and view online players(WIP).
 Whatever on PC or Mobile.
 
-## How To Install
+
+## Installation
 # For Windows 10:
 #### 1. Install Python 3 from https://www.python.org/, Remember setup your environment for pip command.
 #### 2. Clone this repo via git bash or download and unzip it.
