@@ -43,6 +43,7 @@ After Your first run, Few files and folders will be generates.
 | --------------- | --------------- | --------------- |
 | Setup | Folder | Contains all setup files for Installing necessary packages. |
 | templates | Folder | Contains all HTML files for HTTP access. |
+| Demo | Folder | Demo pictures for readme.md |
 | ip_ban | Folder | Setting file for ip_ban module |
 | main.py | Python Executable | The entry point of this program. |
 | config.py | Python Executable | The config of program |
