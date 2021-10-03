@@ -64,5 +64,6 @@ You can change your port, binding IP from Internet or Localhost, secret code for
 ### * Page for viewing past logs
 ### * View all plugins
 ### * View online players
+### * Permission group function
 ### * Plugin Installion on HTML interface
 ### * ~~More information like RAM~~, server runtime, etc.
