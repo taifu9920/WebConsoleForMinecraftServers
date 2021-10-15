@@ -5,6 +5,7 @@ Flask-SocketIO
 python-engineio
 python-socketio
 python-socketio[client]
+websocket-client
 psutil
 eventlet
 flask-ipban
