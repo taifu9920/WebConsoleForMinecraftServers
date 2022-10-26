@@ -227,8 +227,7 @@ def command(data):
                     else:
                         Servers[folder] = [subprocess.Popen(default_setup.format(jarFile).split(), stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT, cwd = ServerPath + folder, shell=False), folder, ""]
                     emit("online", {"folder": folder}, broadcast=True)
-                    read = Thread(target=reader, args=(Servers[folder], ))
-                    read.setDaemon(True)
+                    read = Thread(target=reader, args=(Servers[folder], ), daemon=True)
                     read.start()
                     logger("{0} boot the folder `{1}`".format(request.remote_addr, folder), 1)
                 else:
